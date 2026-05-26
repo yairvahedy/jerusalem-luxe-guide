@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node -e \"import('fs').then(f=>f.writeFileSync('dist/server/server.js','export { default } from \\\"./index.js\\\";\\n'))\"",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
