@@ -256,7 +256,7 @@ exception when duplicate_object then null; end $$;
 
 -- ── Seed: Agents ──────────────────────────────────────────────────────────────
 insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active) values
-  ('Jack Freedman', 'ג''ק פרידמן', 'Jerusalem rental and property specialist. Born and raised in Jerusalem, Jack brings genuine local knowledge and a personal approach to every search.', '972533985043', '+972 53-398-5043', 'jack@jfrealty.co.il', 'jack-freedman', true),
+  ('Jack Freedman', 'ג''ק פרידמן', 'Jerusalem rental and property specialist. Born and raised in Jerusalem, Jack brings genuine local knowledge and a personal approach to every search.', '972533985043', '+972 53-398-5043', 'jackfreedman2210@gmail.com', 'jack-freedman', true),
   ('Yehuda Klein', 'יהודה קליין', 'Specializes in residential rentals and sales across Jerusalem''s top neighborhoods with over a decade of hands-on experience.', '972585420333', '+972 58-542-0333', 'yehuda@jfrealty.co.il', 'yehuda-klein', true),
   ('Perla Goldenberg', 'פרלה גולדנברג', 'Helping families and individuals find the right Jerusalem apartment. Fluent in Hebrew, English, and French.', '972525782001', '+972 52-578-2001', 'perla@jfrealty.co.il', 'perla-goldenberg', true),
   ('Pinchas Liker', 'פנחס לייקר', 'Focused on long-term rentals and property investment in Jerusalem''s most sought-after addresses.', '972542018974', '+972 54-201-8974', 'pinchas@jfrealty.co.il', 'pinchas-liker', true),

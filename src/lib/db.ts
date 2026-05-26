@@ -254,7 +254,7 @@ export async function getSiteInfo(): Promise<SiteInfo> {
     phone: "+972533985043",
     phone_display: "+972 53-398-5043",
     whatsapp: "972533985043",
-    email: "jack@jfrealty.co.il",
+    email: "jackfreedman2210@gmail.com",
     address: "Jerusalem, Israel",
     tagline: "Jerusalem apartment rentals & sales — local expertise, personal service.",
   };

@@ -271,7 +271,7 @@ const defaultTestimonials: TestimonialItem[] = [
 ];
 const defaultLifestyle: LifestyleContent = { title: "A Jerusalem address is more than a home.", subtitle: "Stone-walled mornings, golden-hour terraces, and a city that has chosen its residents carefully for three thousand years." };
 const defaultContactBanner: ContactBannerContent = { title: "Looking for something specific?", subtitle: "Tell Jack what you're searching for — he'll find it." };
-const defaultSiteInfo: SiteInfo = { brand: "JF Realty", agent_name: "Jack Freedman", phone: "+972 53-398-5043", phone_display: "+972 53-398-5043", whatsapp: "972533985043", email: "jack@jfrealty.co.il", address: "Jerusalem, Israel", tagline: "Luxury Jerusalem real estate, personally guided." };
+const defaultSiteInfo: SiteInfo = { brand: "JF Realty", agent_name: "Jack Freedman", phone: "+972 53-398-5043", phone_display: "+972 53-398-5043", whatsapp: "972533985043", email: "jackfreedman2210@gmail.com", address: "Jerusalem, Israel", tagline: "Luxury Jerusalem real estate, personally guided." };
 const defaultAbout: AboutContent = { lead: "Jerusalem's young luxury specialist — combining old-city instinct with modern service.", body1: "Jack Freedman represents a new generation of Jerusalem real estate.", body2: "His approach is personal, discreet, and uncompromising." };
 
 function ContentEditor() {

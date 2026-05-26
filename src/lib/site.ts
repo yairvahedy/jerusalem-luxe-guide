@@ -4,7 +4,7 @@ export const SITE = {
   phone: "+972533985043",
   phoneDisplay: "+972 53-398-5043",
   whatsapp: "972533985043",
-  email: "jack@jfrealty.co.il",
+  email: "jackfreedman2210@gmail.com",
   city: "Jerusalem",
   address: "King David Street, Jerusalem, Israel",
   mapsQuery: "King+David+Street+Jerusalem",
