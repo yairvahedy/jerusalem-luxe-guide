@@ -115,9 +115,13 @@ export function ListingForm({ initialData, onSave }: Props) {
     getAllAgentsAdmin().then(setAgents).catch(() => {});
     getAllNeighborhoodsAdmin()
       .then((nbhds) => {
-        if (nbhds.length > 0) {
-          setNeighborhoodOptions(nbhds.map((n) => n.name).sort((a, b) => a.localeCompare(b)));
-        }
+        const dbNames = nbhds.map((n) => n.name);
+        // Merge DB names with the fallback list so ALL neighborhoods always appear,
+        // even if the DB table is only partially seeded.
+        const merged = [...new Set([...dbNames, ...NEIGHBORHOODS_FALLBACK])].sort((a, b) =>
+          a.localeCompare(b)
+        );
+        setNeighborhoodOptions(merged);
       })
       .catch(() => {});
   }, []);
