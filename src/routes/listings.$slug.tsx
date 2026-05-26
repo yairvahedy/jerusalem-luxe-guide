@@ -49,7 +49,7 @@ function ListingDetail() {
             </div>
             {listing.images.length > 1 && (
               <div className="mt-3 grid grid-cols-4 gap-2">
-                {listing.images.map((img, i) => (
+                {listing.images.map((img: string, i: number) => (
                   <button key={i} onClick={() => setActive(i)} className={`aspect-[4/3] overflow-hidden rounded-sm ${i === active ? "ring-2 ring-accent" : "opacity-70 hover:opacity-100"}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
