@@ -59,7 +59,7 @@ function Header() {
             href={waLink()}
             target="_blank"
             rel="noopener"
-            className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-white bg-[#25D366] hover:bg-[#22c45e] px-4 py-2 rounded-sm transition-colors"
+            className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-white hover:bg-[#22c45e] px-4 py-2 rounded-sm transition-colors bg-[#3dab2c]"
           >
             <MessageCircle className="size-3.5" /> WhatsApp
           </a>
