@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Upload, X, Star, GripVertical, Video, Save } from "lucide-react";
-import { uploadImage, getAllAgentsAdmin } from "@/lib/db";
+import { Upload, X, Star, GripVertical, Video, Save, PlayCircle, FileVideo } from "lucide-react";
+import { uploadImage, uploadVideo, getAllAgentsAdmin } from "@/lib/db";
+import { useToast } from "@/lib/toast";
 import type { DbListing, DbListingInsert, Agent } from "@/lib/database.types";
 
 type Props = {
@@ -9,9 +10,9 @@ type Props = {
 };
 
 const NEIGHBORHOODS = [
-  "Mamilla", "German Colony", "Rehavia", "Talbiya",
-  "Old Katamon", "City Center", "Baka", "Arnona",
-  "Abu Tor", "Talbieh", "Yemin Moshe",
+  "German Colony", "Rehavia", "Talbiya", "Old Katamon", "City Center",
+  "Baka", "Mamilla", "Arnona", "Abu Tor", "Talbieh", "Yemin Moshe",
+  "Kiryat Moshe", "Givat Ram", "Har Nof", "Ramat Eshkol",
 ];
 
 function generateSlug(title: string) {
@@ -21,11 +22,12 @@ function generateSlug(title: string) {
 export function ListingForm({ initialData, onSave }: Props) {
   const isEdit = !!initialData;
   const [agents, setAgents] = useState<Agent[]>([]);
+  const { toast } = useToast();
 
   const [form, setForm] = useState({
     title: initialData?.title ?? "",
     price: initialData?.price?.toString() ?? "",
-    type: initialData?.type ?? "sale",
+    type: initialData?.type ?? "rent",
     neighborhood: initialData?.neighborhood ?? "",
     address: initialData?.address ?? "",
     bedrooms: initialData?.bedrooms?.toString() ?? "0",
@@ -54,28 +56,34 @@ export function ListingForm({ initialData, onSave }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [videoDragOver, setVideoDragOver] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getAllAgentsAdmin().then(setAgents);
+    getAllAgentsAdmin().then(setAgents).catch(() => {});
   }, []);
 
   const set = (key: string, value: unknown) => setForm((f) => ({ ...f, [key]: value }));
 
+  // ── Image upload ────────────────────────────────────────────────────────────
   const uploadFiles = async (files: FileList | File[]) => {
     setUploading(true);
     setError("");
-    const arr = Array.from(files);
     try {
       const urls: string[] = [];
-      for (const file of arr) {
+      for (const file of Array.from(files)) {
         const path = `listings/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
         const url = await uploadImage(file, path);
         urls.push(url);
       }
       setImages((prev) => [...prev, ...urls]);
+      toast(`${urls.length} photo${urls.length > 1 ? "s" : ""} uploaded`);
     } catch (e: any) {
       setError(e.message ?? "Upload failed");
+      toast(e.message ?? "Upload failed", "error");
     } finally {
       setUploading(false);
     }
@@ -89,6 +97,54 @@ export function ListingForm({ initialData, onSave }: Props) {
     e.preventDefault();
     setDragOver(false);
     if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files);
+  }, []);
+
+  // ── Video upload ────────────────────────────────────────────────────────────
+  const handleVideoUpload = async (file: File) => {
+    if (file.size > 100 * 1024 * 1024) {
+      setError("Video file too large — please keep it under 100 MB.");
+      toast("Video file too large (max 100 MB)", "error");
+      return;
+    }
+    setVideoUploading(true);
+    setVideoProgress(0);
+    setError("");
+
+    // Animate progress
+    const fakeInterval = setInterval(() => {
+      setVideoProgress((p) => {
+        if (p >= 85) { clearInterval(fakeInterval); return p; }
+        return Math.min(85, p + Math.random() * 12 + 3);
+      });
+    }, 400);
+
+    try {
+      const path = `listings/videos/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+      const url = await uploadVideo(file, path, (pct) => setVideoProgress(pct));
+      clearInterval(fakeInterval);
+      setVideoProgress(100);
+      setTimeout(() => { setVideoUploading(false); setVideoProgress(0); }, 800);
+      set("video_url", url);
+      toast("Video uploaded successfully");
+    } catch (e: any) {
+      clearInterval(fakeInterval);
+      setVideoUploading(false);
+      setVideoProgress(0);
+      setError(e.message ?? "Video upload failed");
+      toast(e.message ?? "Video upload failed", "error");
+    }
+  };
+
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleVideoUpload(file);
+  };
+
+  const handleVideoDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setVideoDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("video/")) handleVideoUpload(file);
   }, []);
 
   const removeImage = (i: number) => setImages((prev) => prev.filter((_, idx) => idx !== i));
@@ -133,13 +189,16 @@ export function ListingForm({ initialData, onSave }: Props) {
         description: form.description || null,
         video_url: form.video_url || null,
         images,
-        status: form.status as "available" | "sold" | "draft",
+        status: form.status as "available" | "rented" | "sold" | "draft",
         featured: form.featured,
         agent_id: form.agent_id || null,
       };
       await onSave(data);
+      toast(isEdit ? "Listing updated successfully" : "Listing created successfully");
     } catch (e: any) {
-      setError(e.message ?? "Failed to save");
+      const msg = e.message ?? "Failed to save listing";
+      setError(msg);
+      toast(msg, "error");
       setSaving(false);
     }
   };
@@ -172,7 +231,7 @@ export function ListingForm({ initialData, onSave }: Props) {
         <input
           value={form.title}
           onChange={(e) => set("title", e.target.value)}
-          placeholder="e.g. Mamilla Penthouse with Old City View"
+          placeholder="e.g. Renovated 3BR — German Colony"
           className="admin-input text-lg"
           required
         />
@@ -181,12 +240,14 @@ export function ListingForm({ initialData, onSave }: Props) {
       {/* Price + Neighborhood */}
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
-          <label className="admin-label">Price (₪) — leave 0 for "on request"</label>
+          <label className="admin-label">
+            {form.type === "rent" ? "Monthly rent (₪)" : "Sale price (₪)"} — leave 0 for "contact us"
+          </label>
           <input
             type="number"
             value={form.price}
             onChange={(e) => set("price", e.target.value)}
-            placeholder="18500000"
+            placeholder={form.type === "rent" ? "7500" : "4500000"}
             className="admin-input"
           />
         </div>
@@ -206,17 +267,17 @@ export function ListingForm({ initialData, onSave }: Props) {
           <input
             value={form.address}
             onChange={(e) => set("address", e.target.value)}
-            placeholder="e.g. 12 Mamilla Avenue"
+            placeholder="e.g. 12 Lloyd George Street"
             className="admin-input"
           />
         </div>
         <div>
-          <label className="admin-label">Arnona / Municipal tax (₪ / year, optional)</label>
+          <label className="admin-label">Arnona / municipal tax (₪/year, optional)</label>
           <input
             type="number"
             value={form.arnona}
             onChange={(e) => set("arnona", e.target.value)}
-            placeholder="12000"
+            placeholder="8400"
             className="admin-input"
           />
         </div>
@@ -254,7 +315,7 @@ export function ListingForm({ initialData, onSave }: Props) {
             { key: "furnished", label: "Furnished" },
             { key: "air_conditioning", label: "Air conditioning" },
           ].map((f) => (
-            <label key={f.key} className="flex items-center gap-3 cursor-pointer py-1">
+            <label key={f.key} className="flex items-center gap-3 cursor-pointer py-1 select-none">
               <div
                 onClick={() => set(f.key, !form[f.key as keyof typeof form])}
                 className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${form[f.key as keyof typeof form] ? "bg-white border-white" : "border-white/20 bg-white/[0.04]"}`}
@@ -274,7 +335,7 @@ export function ListingForm({ initialData, onSave }: Props) {
           value={form.description}
           onChange={(e) => set("description", e.target.value)}
           rows={5}
-          placeholder="Describe the property — style, unique features, views, atmosphere…"
+          placeholder="Describe the apartment — layout, light, nearby amenities, what makes it special…"
           className="admin-input resize-none leading-relaxed"
         />
       </div>
@@ -296,7 +357,7 @@ export function ListingForm({ initialData, onSave }: Props) {
           ) : (
             <>
               <p className="text-white/50 text-sm">Drag & drop photos here, or tap to browse</p>
-              <p className="text-white/25 text-xs mt-1">Supports JPG, PNG, WebP · First image is the cover</p>
+              <p className="text-white/25 text-xs mt-1">JPG, PNG, WebP · First photo is the cover</p>
             </>
           )}
         </div>
@@ -304,7 +365,7 @@ export function ListingForm({ initialData, onSave }: Props) {
         {images.length > 0 && (
           <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
             {images.map((url, i) => (
-              <div key={url} className="group relative aspect-square rounded-lg overflow-hidden bg-white/[0.06]">
+              <div key={url + i} className="group relative aspect-square rounded-lg overflow-hidden bg-white/[0.06]">
                 <img src={url} alt="" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors" />
                 {i === 0 && (
@@ -326,15 +387,77 @@ export function ListingForm({ initialData, onSave }: Props) {
         )}
       </div>
 
-      {/* Video URL */}
+      {/* Video upload */}
       <div>
-        <label className="admin-label flex items-center gap-2"><Video className="size-3.5" /> Video tour URL (YouTube embed)</label>
-        <input
-          value={form.video_url}
-          onChange={(e) => set("video_url", e.target.value)}
-          placeholder="https://www.youtube.com/embed/..."
-          className="admin-input"
-        />
+        <label className="admin-label flex items-center gap-2"><Video className="size-3.5" /> Property video tour</label>
+
+        {/* Current video preview */}
+        {form.video_url && !videoUploading && (
+          <div className="mb-3 rounded-xl overflow-hidden bg-black aspect-video relative group">
+            <video
+              src={form.video_url}
+              controls
+              className="w-full h-full object-contain"
+              preload="metadata"
+            />
+            <button
+              type="button"
+              onClick={() => set("video_url", "")}
+              className="absolute top-2 right-2 w-8 h-8 bg-black/70 hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+            >
+              <X className="size-3.5 text-white" />
+            </button>
+          </div>
+        )}
+
+        {/* Upload progress */}
+        {videoUploading && (
+          <div className="mb-3 p-5 rounded-xl border border-white/[0.1] bg-white/[0.03]">
+            <div className="flex items-center gap-3 mb-3">
+              <FileVideo className="size-5 text-white/50" />
+              <span className="text-sm text-white/60">Uploading video…</span>
+              <span className="ml-auto text-sm text-white/40">{Math.round(videoProgress)}%</span>
+            </div>
+            <div className="h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                style={{ width: `${videoProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Drop zone */}
+        {!form.video_url && !videoUploading && (
+          <div
+            onDragOver={(e) => { e.preventDefault(); setVideoDragOver(true); }}
+            onDragLeave={() => setVideoDragOver(false)}
+            onDrop={handleVideoDrop}
+            onClick={() => videoRef.current?.click()}
+            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${videoDragOver ? "border-white/40 bg-white/[0.06]" : "border-white/[0.1] hover:border-white/25 bg-white/[0.02]"}`}
+          >
+            <input
+              ref={videoRef}
+              type="file"
+              accept="video/mp4,video/quicktime,video/webm,video/x-msvideo"
+              onChange={handleVideoFileChange}
+              className="hidden"
+            />
+            <PlayCircle className="size-8 text-white/20 mx-auto mb-2" />
+            <p className="text-white/50 text-sm">Drag & drop a video, or tap to browse</p>
+            <p className="text-white/25 text-xs mt-1">MP4, MOV, WebM · Max 100 MB · Stored securely in Supabase</p>
+          </div>
+        )}
+
+        {/* Or paste URL */}
+        <div className="mt-2">
+          <input
+            value={form.video_url}
+            onChange={(e) => set("video_url", e.target.value)}
+            placeholder="Or paste a video URL (YouTube, direct MP4, etc.)"
+            className="admin-input text-sm"
+          />
+        </div>
       </div>
 
       {/* Agent */}
@@ -342,7 +465,7 @@ export function ListingForm({ initialData, onSave }: Props) {
         <label className="admin-label">Assigned agent</label>
         <select value={form.agent_id} onChange={(e) => set("agent_id", e.target.value)} className="admin-input">
           <option value="">No agent assigned</option>
-          {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          {agents.map((a) => <option key={a.id} value={a.id}>{a.name}{a.name_he ? ` — ${a.name_he}` : ""}</option>)}
         </select>
       </div>
 
@@ -356,13 +479,14 @@ export function ListingForm({ initialData, onSave }: Props) {
       <div className="sticky bottom-0 -mx-5 sm:-mx-8 px-5 sm:px-8 py-4 bg-[#0f0f0f]/95 backdrop-blur border-t border-white/[0.08] flex items-center gap-3">
         <button
           type="submit"
-          disabled={saving || uploading}
+          disabled={saving || uploading || videoUploading}
           className="inline-flex items-center gap-2 h-11 px-7 bg-white text-black rounded-md text-sm font-medium hover:bg-white/90 disabled:opacity-50 transition-colors"
         >
           <Save className="size-4" />
           {saving ? "Saving…" : isEdit ? "Save changes" : "Create listing"}
         </button>
-        {uploading && <span className="text-white/40 text-sm">Uploading images…</span>}
+        {uploading && <span className="text-white/40 text-sm">Uploading photos…</span>}
+        {videoUploading && <span className="text-white/40 text-sm">Uploading video…</span>}
       </div>
     </form>
   );
@@ -371,7 +495,8 @@ export function ListingForm({ initialData, onSave }: Props) {
 function StatusSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const opts = [
     { v: "available", label: "Available", cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
-    { v: "sold", label: "Sold", cls: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
+    { v: "rented", label: "Rented", cls: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
+    { v: "sold", label: "Sold", cls: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
     { v: "draft", label: "Draft", cls: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20" },
   ];
   const cur = opts.find((o) => o.v === value) ?? opts[0];

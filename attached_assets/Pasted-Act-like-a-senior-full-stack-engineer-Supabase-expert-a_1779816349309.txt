@@ -1,0 +1,229 @@
+Act like a senior full-stack engineer, Supabase expert, and elite UI/UX architect specializing in scalable real estate platforms.
+
+Your goal is to fix and refactor the existing real estate website and admin dashboard project.
+
+IMPORTANT:
+The business focus has changed.
+
+This is NOT a luxury sales brokerage anymore.
+
+The website should now feel:
+- modern
+- professional
+- trustworthy
+- clean
+- rental-focused
+- Jerusalem apartment rental oriented
+- practical and polished
+- mobile friendly
+- optimized for WhatsApp lead generation
+
+Avoid:
+- overly luxurious wording
+- cinematic millionaire branding
+- flashy luxury language
+- expensive “elite brokerage” vibes
+
+The tone should instead feel:
+- approachable
+- trustworthy
+- modern
+- local Jerusalem rental expert
+- practical but premium
+
+CRITICAL BUG FIXES:
+Currently:
+- saving listings throws errors
+- updating content throws errors
+- admin dashboard actions fail
+
+You must:
+1) Diagnose all Supabase/API/database issues
+2) Fix all CRUD functionality
+3) Ensure saving/editing/deleting works properly
+4) Ensure image uploads work
+5) Ensure agent updates work
+6) Add proper loading states
+7) Add proper success/error handling
+8) Add toast notifications
+9) Ensure all forms validate correctly
+
+SUPABASE REQUIREMENTS:
+Verify and fix:
+- table structure
+- insert/update permissions
+- row-level security policies
+- authentication flow
+- storage bucket permissions
+- foreign key relationships
+- API calls
+- environment variables
+- image upload handling
+
+Ensure:
+- listings save successfully
+- agents save successfully
+- settings save successfully
+- uploads work correctly
+
+AGENTS SYSTEM FIXES:
+Currently the admin dashboard says:
+“No agents yet”
+
+You must:
+1) Create and seed the agents table with the following agents
+2) Ensure they appear in /admin
+3) Ensure their profiles can be edited
+4) Ensure agent photos can be uploaded/replaced directly from the admin dashboard
+5) Ensure assigned listings connect correctly to agents
+
+Create these agents:
+
+Agent 1:
+- Name EN: Yehuda Klein
+- Name HE: יהודה קליין
+- Phone: +972 58-542-0333
+
+Agent 2:
+- Name EN: Perla Goldenberg
+- Name HE: פרלה גולדנברג
+- Phone: +972 52-578-2001
+
+Agent 3:
+- Name EN: Pinchas Liker
+- Name HE: פנחס לייקר
+- Phone: +972 54-201-8974
+
+Agent 4:
+- Name EN: Yair Aronstam
+- Name HE: יאיר ארונסתם
+- Phone: +972 50-553-2889
+
+AGENT PHOTO REQUIREMENTS:
+- Add editable placeholder portraits initially
+- Allow photo replacement from admin portal
+- Use drag-and-drop upload
+- Support mobile uploads
+- Store images in Supabase Storage
+- Show live preview before saving
+
+LISTINGS SYSTEM:
+Update the listing forms and database structure.
+
+Fields required:
+- Property title
+- Description
+- Address
+- Neighborhood
+- Assigned agent dropdown
+- Sale or rent
+- Price in shekels
+- Monthly rent in shekels
+- Arnona (optional)
+- Square meters
+- Bedrooms
+- Bathrooms
+
+Property facts:
+- Mamad
+- Balcony
+- Elevator
+- Parking
+- Storage
+- Air conditioning
+- Furnished
+- Renovated
+- Accessibility
+- Sukka balcony
+
+MEDIA REQUIREMENTS:
+Do NOT use YouTube for property videos.
+
+Instead:
+- implement direct video uploads
+- use Supabase Storage for videos
+- allow uploading short property videos directly from mobile devices
+- support mp4 uploads
+- create optimized video compression handling if possible
+- create video preview support
+- show loading progress while uploading
+
+PUBLIC WEBSITE REBRANDING:
+Refactor all wording and branding away from luxury sales language.
+
+Replace with:
+- Jerusalem apartment rentals
+- local rental expertise
+- practical trusted service
+- modern rental platform
+- family-friendly apartment finding
+- student/family/rental oriented wording
+
+Rewrite:
+- homepage text
+- CTAs
+- hero sections
+- about section
+- listing wording
+- neighborhood descriptions
+
+The branding should feel:
+- modern
+- trustworthy
+- approachable
+- clean
+- practical
+- mobile-first
+- professional
+
+ADMIN DASHBOARD REQUIREMENTS:
+Everything must be editable from /admin:
+- listings
+- listing images
+- property videos
+- agents
+- agent photos
+- homepage text
+- CTA buttons
+- colors
+- neighborhood content
+- contact details
+- branding
+
+SITE SETTINGS:
+Create a “Site Settings” section where admins can:
+- edit all button colors
+- edit all CTA text
+- edit hero sections
+- upload homepage images
+- update logos
+- update contact information
+
+UI/UX REQUIREMENTS:
+- Modern clean dashboard
+- Large touch-friendly mobile UI
+- Responsive layouts
+- Elegant transitions
+- Minimal friction
+- Easy one-handed mobile usage
+- Fast interactions
+- Clear feedback after saving
+
+IMPORTANT:
+- Remove all hardcoded data
+- Ensure everything is dynamic
+- Prioritize maintainability
+- Prioritize simplicity
+- Prioritize mobile usage
+- Ensure all admin functions work reliably
+
+Before finalizing:
+1) Verify all save/update actions work
+2) Verify uploads work correctly
+3) Verify agents appear properly
+4) Verify agent photos can be edited
+5) Verify property videos upload correctly
+6) Verify all branding is rental-focused instead of luxury-focused
+7) Verify the admin dashboard works smoothly on mobile
+
+Take a deep breath and work on this problem step-by-step.

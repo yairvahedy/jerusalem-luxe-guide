@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-r
 import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, FileText, MapPin, Settings } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { ToastProvider } from "@/lib/toast";
 import logo from "@/assets/jf-logo.jpeg";
 
 export const Route = createFileRoute("/admin")({
@@ -41,64 +42,66 @@ function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white flex">
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
+    <ToastProvider>
+      <div className="min-h-screen bg-[#0f0f0f] text-white flex">
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        )}
 
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#141414] border-r border-white/[0.06] flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="flex items-center justify-between h-16 px-5 border-b border-white/[0.06] shrink-0">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="JF Realty" className="h-8 w-8 rounded-sm object-cover opacity-90" />
-            <div>
-              <div className="text-sm font-medium">JF Realty</div>
-              <div className="text-[10px] text-white/40 uppercase tracking-widest">Admin</div>
+        <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#141414] border-r border-white/[0.06] flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="flex items-center justify-between h-16 px-5 border-b border-white/[0.06] shrink-0">
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="JF Realty" className="h-8 w-8 rounded-sm object-cover opacity-90" />
+              <div>
+                <div className="text-sm font-medium">JF Realty</div>
+                <div className="text-[10px] text-white/40 uppercase tracking-widest">Admin</div>
+              </div>
             </div>
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white/40 hover:text-white">
+              <X className="size-5" />
+            </button>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white/40 hover:text-white">
-            <X className="size-5" />
-          </button>
-        </div>
 
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${isActive(n.to, n.exact) ? "bg-white/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"}`}
-            >
-              <n.icon className="size-4 shrink-0" />
-              {n.label}
-            </Link>
-          ))}
-        </nav>
+          <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+            {nav.map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${isActive(n.to, n.exact) ? "bg-white/10 text-white" : "text-white/50 hover:text-white hover:bg-white/5"}`}
+              >
+                <n.icon className="size-4 shrink-0" />
+                {n.label}
+              </Link>
+            ))}
+          </nav>
 
-        <div className="p-3 border-t border-white/[0.06] space-y-0.5">
-          <a href="/" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-white hover:bg-white/5 transition-colors">
-            <Home className="size-4" /> View site
-          </a>
-          <button onClick={signOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-destructive hover:bg-white/5 transition-colors">
-            <LogOut className="size-4" /> Sign out
-          </button>
-        </div>
-      </aside>
+          <div className="p-3 border-t border-white/[0.06] space-y-0.5">
+            <a href="/" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-white hover:bg-white/5 transition-colors">
+              <Home className="size-4" /> View site
+            </a>
+            <button onClick={signOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-destructive hover:bg-white/5 transition-colors">
+              <LogOut className="size-4" /> Sign out
+            </button>
+          </div>
+        </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 lg:overflow-auto">
-        <header className="lg:hidden flex items-center gap-4 h-16 px-5 border-b border-white/[0.06] bg-[#141414] shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white">
-            <Menu className="size-5" />
-          </button>
-          <span className="text-sm font-medium">
-            {nav.find((n) => isActive(n.to, n.exact))?.label ?? "Admin"}
-          </span>
-        </header>
+        <div className="flex-1 flex flex-col min-w-0 lg:overflow-auto">
+          <header className="lg:hidden flex items-center gap-4 h-16 px-5 border-b border-white/[0.06] bg-[#141414] shrink-0">
+            <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white">
+              <Menu className="size-5" />
+            </button>
+            <span className="text-sm font-medium">
+              {nav.find((n) => isActive(n.to, n.exact))?.label ?? "Admin"}
+            </span>
+          </header>
 
-        <div className="flex-1 overflow-auto">
-          <Outlet />
+          <div className="flex-1 overflow-auto">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }
 
@@ -140,7 +143,16 @@ function AdminLogin() {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
-        <p className="text-center text-[11px] text-white/25 mt-8">Use your Supabase Auth credentials to access the admin portal.</p>
+
+        {/* Setup help */}
+        <div className="mt-8 p-4 bg-white/[0.03] border border-white/[0.07] rounded-lg">
+          <p className="text-[11px] text-white/40 font-medium uppercase tracking-widest mb-2">First time setup?</p>
+          <ol className="text-xs text-white/30 space-y-1.5 list-decimal list-inside">
+            <li>Run <code className="text-white/50">supabase-schema.sql</code> in Supabase → SQL Editor</li>
+            <li>Go to Supabase → Authentication → Users → Add user</li>
+            <li>Log in here with those credentials</li>
+          </ol>
+        </div>
       </div>
     </div>
   );
