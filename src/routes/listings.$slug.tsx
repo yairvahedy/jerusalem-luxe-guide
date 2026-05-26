@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { MessageCircle, Phone, BedDouble, Bath, Maximize2, Check, ArrowLeft, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { MessageCircle, Phone, BedDouble, Bath, Maximize2, Check, ArrowLeft, ChevronLeft, ChevronRight, Play, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getListing, activeListings, type Listing } from "@/lib/listings";
 import { getListingBySlug, getListings, getAgents } from "@/lib/db";
@@ -95,11 +95,56 @@ function ListingDetail() {
     : waLink(`Hi Jack, I'd like more info about "${listing.title}".`);
   const contactTelLink = agent?.phone ? `tel:${agent.phone}` : telLink;
 
+  const [lightbox, setLightbox] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
+
   const prev = () => setActive((a) => (a === 0 ? listing.images.length - 1 : a - 1));
   const next = () => setActive((a) => (a === listing.images.length - 1 ? 0 : a + 1));
 
+  const lbPrev = useCallback(() => setLightboxIdx((i) => (i - 1 + listing.images.length) % listing.images.length), [listing.images.length]);
+  const lbNext = useCallback(() => setLightboxIdx((i) => (i + 1) % listing.images.length), [listing.images.length]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(false);
+      if (e.key === "ArrowLeft") lbPrev();
+      if (e.key === "ArrowRight") lbNext();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightbox, lbPrev, lbNext]);
+
+  const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightbox(true); };
+
   return (
     <>
+      {lightbox && listing.images.length > 0 && (
+        <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center" onClick={() => setLightbox(false)}>
+          <button onClick={() => setLightbox(false)} className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-10" aria-label="Close">
+            <X className="size-5" />
+          </button>
+          {listing.images.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); lbPrev(); }} className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-10" aria-label="Previous">
+                <ChevronLeft className="size-5" />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); lbNext(); }} className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-10" aria-label="Next">
+                <ChevronRight className="size-5" />
+              </button>
+            </>
+          )}
+          <img src={listing.images[lightboxIdx]} alt="" onClick={(e) => e.stopPropagation()} className="max-h-[90vh] max-w-[90vw] object-contain rounded-sm shadow-2xl" />
+          {listing.images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/50 text-xs tracking-widest">{lightboxIdx + 1} / {listing.images.length}</div>
+          )}
+        </div>
+      )}
+
       <div className="mx-auto max-w-7xl px-5 sm:px-8 pt-7 pb-2">
         <Link to="/listings" className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors">
           <ArrowLeft className="size-3.5" /> {t.nav.listings}
@@ -112,7 +157,12 @@ function ListingDetail() {
           <div>
             <div className="relative aspect-[16/10] bg-zinc-900 rounded-sm overflow-hidden group">
               {listing.images[active] ? (
-                <img src={listing.images[active]} alt={listing.title} className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300" />
+                <img
+                  src={listing.images[active]}
+                  alt={listing.title}
+                  onClick={() => openLightbox(active)}
+                  className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 cursor-zoom-in"
+                />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">No image</div>
               )}
