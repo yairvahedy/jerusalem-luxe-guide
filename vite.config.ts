@@ -23,8 +23,9 @@ export default defineConfig({
         "@supabase/postgrest-js",
         "@supabase/storage-js",
         "@supabase/realtime-js",
-        "ws",
       ],
+      // ws is CJS and must NOT be bundled — let Bun resolve it natively
+      external: ["ws"],
     },
   },
 });
