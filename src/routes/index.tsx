@@ -155,7 +155,7 @@ function Hero() {
         <div className="hidden md:flex absolute bottom-16 right-8 items-end gap-4">
           <div className="text-right text-white/90">
             <div className="font-display text-xl leading-tight">{SITE.agentName}</div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-accent mt-1">Luxury Specialist</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-accent mt-1">Leasing Advisor</div>
           </div>
           <div className="relative w-20 h-28 lg:w-28 lg:h-40 overflow-hidden rounded-sm ring-1 ring-white/20">
             <img src={portrait} alt="Jack Freedman" className="absolute inset-0 w-full h-full object-cover" />
@@ -251,7 +251,7 @@ function WhyJack({ items }: { items: WhyItem[] }) {
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <div className="text-[9px] uppercase tracking-[0.3em] text-accent">{SITE.brand}</div>
               <div className="font-display text-2xl mt-1">{SITE.agentName}</div>
-              <div className="text-sm text-white/60 mt-0.5">Luxury Specialist · Jerusalem</div>
+              <div className="text-sm text-white/60 mt-0.5">Leasing Advisor · Jerusalem</div>
             </div>
           </div>
           <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-accent/10 rounded-sm hidden lg:block" />
