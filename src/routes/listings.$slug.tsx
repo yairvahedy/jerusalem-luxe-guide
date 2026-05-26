@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { MessageCircle, Phone, BedDouble, Bath, Maximize2, Check, X, ArrowLeft, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { MessageCircle, Phone, BedDouble, Bath, Maximize2, Check, ArrowLeft, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getListing, activeListings, type Listing } from "@/lib/listings";
-import { getListingBySlug, getListings } from "@/lib/db";
-import { waLink, telLink } from "@/lib/site";
+import { getListingBySlug, getListings, getAgents } from "@/lib/db";
+import { waLink, telLink, SITE } from "@/lib/site";
 import { PropertyCard, formatDisplayPrice } from "@/components/site/PropertyCard";
-import type { DbListing } from "@/lib/database.types";
+import type { DbListing, Agent } from "@/lib/database.types";
 
 function staticToDb(l: Listing): DbListing {
   return {
@@ -14,6 +14,9 @@ function staticToDb(l: Listing): DbListing {
     type: l.type, neighborhood: l.neighborhood, bedrooms: l.bedrooms,
     bathrooms: l.bathrooms, sqm: l.sqm, balcony: l.balcony,
     mamad: l.mamad, elevator: l.elevator, parking: l.parking,
+    storage: false, sukka_balcony: false, accessibility: false,
+    renovated: false, furnished: false, air_conditioning: false,
+    address: null, arnona: null,
     description: l.description ?? null, images: l.images,
     video_url: l.videoUrl ?? null,
     status: l.sold ? "sold" : "available",
@@ -39,6 +42,7 @@ function ListingDetail() {
   const { listing } = Route.useLoaderData();
   const { t, lang } = useI18n();
   const [active, setActive] = useState(0);
+  const [agent, setAgent] = useState<Agent | null>(null);
   const [related, setRelated] = useState<DbListing[]>(
     activeListings().filter((x) => x.slug !== listing.slug).slice(0, 3).map(staticToDb)
   );
@@ -48,7 +52,14 @@ function ListingDetail() {
       const rel = data.filter((x) => x.slug !== listing.slug && x.status === "available").slice(0, 3);
       if (rel.length > 0) setRelated(rel);
     }).catch(() => {});
-  }, [listing.slug]);
+
+    if (listing.agent_id) {
+      getAgents().then((agents) => {
+        const found = agents.find((a) => a.id === listing.agent_id);
+        setAgent(found ?? null);
+      }).catch(() => {});
+    }
+  }, [listing.slug, listing.agent_id]);
 
   const facts = [
     { i: BedDouble, k: t.listing.bedrooms, v: listing.bedrooms },
@@ -56,12 +67,27 @@ function ListingDetail() {
     { i: Maximize2, k: t.listing.sqm, v: `${listing.sqm}m²` },
   ];
 
-  const features = [
-    { k: t.listing.balcony, v: listing.balcony },
-    { k: t.listing.mamad, v: listing.mamad },
-    { k: t.listing.elevator, v: listing.elevator },
-    { k: t.listing.parking, v: listing.parking },
+  // All amenity fields — only show the ones that are true (checked)
+  const allFeatures = [
+    { k: t.listing.balcony,     v: listing.balcony },
+    { k: t.listing.mamad,       v: listing.mamad },
+    { k: t.listing.elevator,    v: listing.elevator },
+    { k: t.listing.parking,     v: listing.parking },
+    { k: t.listing.storage,     v: (listing as any).storage },
+    { k: t.listing.sukkaBalcony,v: (listing as any).sukka_balcony },
+    { k: t.listing.accessibility,v: (listing as any).accessibility },
+    { k: t.listing.renovated,   v: (listing as any).renovated },
+    { k: t.listing.furnished,   v: (listing as any).furnished },
+    { k: t.listing.airCon,      v: (listing as any).air_conditioning },
   ];
+  const checkedFeatures = allFeatures.filter((f) => f.v);
+
+  // Contact info — use assigned agent if available, fall back to Jack
+  const agentFirstName = agent ? agent.name.split(" ")[0] : "Jack";
+  const contactWaLink = agent?.whatsapp
+    ? `https://wa.me/${agent.whatsapp}?text=${encodeURIComponent(`Hi ${agentFirstName}, I'd like more info about "${listing.title}".`)}`
+    : waLink(`Hi Jack, I'd like more info about "${listing.title}".`);
+  const contactTelLink = agent?.phone ? `tel:${agent.phone}` : telLink;
 
   const prev = () => setActive((a) => (a === 0 ? listing.images.length - 1 : a - 1));
   const next = () => setActive((a) => (a === listing.images.length - 1 ? 0 : a + 1));
@@ -133,25 +159,27 @@ function ListingDetail() {
               </div>
 
               <div className="space-y-2.5">
-                <a href={waLink(`Hi Jack, I'd like more info about "${listing.title}".`)} target="_blank" rel="noopener" className="flex items-center justify-center gap-2.5 h-13 rounded-sm bg-[#3dab2c] text-white font-medium hover:bg-[#22c45e] transition-colors shadow-md shadow-black/10">
-                  <MessageCircle className="size-4" /> {t.listing.inquire}
+                <a href={contactWaLink} target="_blank" rel="noopener" className="flex items-center justify-center gap-2.5 h-13 rounded-sm bg-[#3dab2c] text-white font-medium hover:bg-[#22c45e] transition-colors shadow-md shadow-black/10">
+                  <MessageCircle className="size-4" /> Contact {agentFirstName}
                 </a>
-                <a href={telLink} className="flex items-center justify-center gap-2.5 h-13 rounded-sm bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+                <a href={contactTelLink} className="flex items-center justify-center gap-2.5 h-13 rounded-sm bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
                   <Phone className="size-4" /> {t.cta.call}
                 </a>
               </div>
 
-              <div className="border-t border-border/40 pt-5">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">{t.listing.facts}</div>
-                <dl className="space-y-2.5">
-                  {features.map((f) => (
-                    <div key={f.k} className="flex items-center justify-between text-sm">
-                      <dt className="text-foreground/70">{f.k}</dt>
-                      <dd>{f.v ? <Check className="size-4 text-accent" /> : <X className="size-4 text-muted-foreground/40" />}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
+              {checkedFeatures.length > 0 && (
+                <div className="border-t border-border/40 pt-5">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">{t.listing.facts}</div>
+                  <dl className="space-y-2.5">
+                    {checkedFeatures.map((f) => (
+                      <div key={f.k} className="flex items-center justify-between text-sm">
+                        <dt className="text-foreground/70">{f.k}</dt>
+                        <dd><Check className="size-4 text-accent" /></dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
             </div>
           </aside>
         </div>
@@ -185,6 +213,7 @@ function ListingDetail() {
                 { label: "Bedrooms", value: listing.bedrooms },
                 { label: "Bathrooms", value: listing.bathrooms },
                 { label: "Area", value: `${listing.sqm} m²` },
+                ...(agent ? [{ label: "Agent", value: agent.name }] : []),
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between py-3.5 border-b border-border/40 text-sm">
                   <span className="text-muted-foreground">{row.label}</span>
