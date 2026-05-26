@@ -1,0 +1,204 @@
+Act like a world-class senior full-stack engineer, luxury UI/UX designer, mobile-first product designer, and real estate SaaS architect.
+
+Your goal is to upgrade my existing luxury Jerusalem real estate website project inside Replit into a production-grade luxury real estate platform with:
+1) A modern ultra-premium UI/UX redesign
+2) A mobile-first admin dashboard for non-technical agents
+3) Multi-agent support
+4) A scalable listings management system
+5) Better conversion optimization for WhatsApp and lead generation
+
+IMPORTANT:
+This is NOT a basic realtor website. The experience must feel like a modern luxury real estate platform designed by a top-tier agency.
+
+CORE OBJECTIVES:
+- Make the UI feel dramatically more modern, premium, cinematic, and polished
+- Improve spacing, typography, animations, responsiveness, and visual hierarchy
+- Make the mobile experience exceptional
+- Make listing management extremely easy for non-technical users
+- Support multiple agents under one brokerage/brand
+- Keep the codebase clean, scalable, and maintainable
+
+TECH STACK REQUIREMENTS:
+- React + Vite
+- Tailwind CSS
+- Supabase backend
+- Mobile-first architecture
+- Clean reusable components
+- Organized scalable folder structure
+- SEO-friendly architecture
+- Optimized image loading
+- Production-ready code
+
+ADMIN DASHBOARD REQUIREMENTS:
+Create a fully functional private admin portal accessible only to authenticated admin users.
+
+The admin portal must:
+- Be mobile optimized first
+- Feel simple enough for someone with almost no technical knowledge
+- Work beautifully on iPhone devices
+- Use large touch-friendly UI components
+- Have modern premium dashboard styling
+
+ADMIN FEATURES:
+1) Add listings
+2) Edit listings
+3) Delete listings
+4) Mark listings sold
+5) Upload multiple property photos
+6) Add video tours
+7) Feature/unfeature listings
+8) Manage agents
+9) Manage neighborhood pages
+10) Draft/publish system
+
+LISTING FORM REQUIREMENTS:
+The add/edit listing experience must be incredibly easy.
+
+Fields:
+- Property title
+- Price
+- Address
+- Neighborhood
+- Bedrooms
+- Bathrooms
+- Square meters
+- Balcony
+- Mamad
+- Elevator
+- Parking
+- Description
+- Image gallery uploader
+- Video tour link
+- Sale or rent
+- Featured listing toggle
+- Agent assigned to listing
+- WhatsApp contact button
+- Status (available/sold/draft)
+
+UX REQUIREMENTS:
+- Drag-and-drop image uploading
+- Live image previews
+- Smooth transitions
+- Minimal friction
+- Auto-saving drafts
+- Large modern input fields
+- Floating save button on mobile
+- Sticky mobile actions
+
+MULTI-AGENT SYSTEM:
+Add support for multiple real estate agents.
+
+Each agent should have:
+- Name
+- Portrait
+- Bio
+- WhatsApp number
+- Phone number
+- Email
+- Listings assigned to them
+- Agent profile page
+
+Agents should be manageable through the admin dashboard.
+
+PUBLIC WEBSITE UPGRADES:
+Modernize the public-facing site significantly.
+
+Upgrade:
+- Typography
+- Layout hierarchy
+- Property cards
+- Animations
+- Navigation
+- Mobile responsiveness
+- Luxury visual polish
+- Listing browsing experience
+- Hero sections
+- Image galleries
+- CTA sections
+
+DESIGN STYLE:
+The UI should feel inspired by:
+- Modern luxury real estate brands
+- Apple-level minimalism
+- High-end hospitality websites
+- Cinematic luxury aesthetics
+- Premium Israeli/Jerusalem architecture
+- Editorial luxury design
+
+COLOR DIRECTION:
+Use a refined luxury palette inspired by:
+- Jerusalem stone
+- Warm neutrals
+- Matte black
+- Soft champagne
+- Elegant off-whites
+- Subtle premium gold accents
+
+Avoid:
+- Generic realtor templates
+- Cheap gradients
+- Cluttered layouts
+- Outdated dashboards
+- Overdesigned animations
+- Fake luxury aesthetics
+
+LISTINGS PAGE REQUIREMENTS:
+Upgrade the listings browsing experience:
+- Smooth filtering
+- Mobile-first cards
+- Fast loading
+- Premium hover states
+- Elegant transitions
+- Search functionality
+- Advanced filters
+- Sticky filter drawer on mobile
+
+PROPERTY PAGE REQUIREMENTS:
+Each property page should feel ultra-premium.
+
+Include:
+- Cinematic image galleries
+- Mobile swipe galleries
+- Sticky WhatsApp CTA
+- Related listings
+- Elegant specs layout
+- Video section
+- Agent profile section
+- Inquiry form
+
+SUPABASE REQUIREMENTS:
+Create:
+- Proper relational database schema
+- Agents table
+- Listings table
+- Images table
+- Neighborhoods table
+- Authentication setup
+- Role-based access control
+- Secure admin access
+
+IMPORTANT:
+- Refactor messy code if needed
+- Improve overall project architecture
+- Make the code production-quality
+- Prioritize maintainability and scalability
+- Keep the admin portal extremely intuitive
+- Ensure everything works beautifully on mobile devices
+
+DELIVERABLES:
+1) Improved luxury frontend
+2) Fully functional admin dashboard
+3) Multi-agent system
+4) Supabase integration
+5) Mobile-first optimization
+6) Production-ready architecture
+7) Clean scalable reusable code
+
+Before finalizing:
+1) Verify the mobile experience feels world-class
+2) Verify listing uploads are extremely simple
+3) Verify multiple agents work correctly
+4) Verify the UI feels premium and modern
+5) Verify the codebase is scalable and maintainable
+
+Take a deep breath and work on this problem step-by-step.
