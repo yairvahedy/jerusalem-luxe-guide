@@ -3,7 +3,7 @@ import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, FileText, MapPin, 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { ToastProvider } from "@/lib/toast";
-import logo from "@/assets/jf-logo.jpeg";
+import logo from "@/assets/jack-photo.png";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,

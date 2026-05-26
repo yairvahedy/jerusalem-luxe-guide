@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import { Menu, X, Phone, MessageCircle, Languages, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { SITE, waLink, telLink } from "@/lib/site";
-import logo from "@/assets/jf-logo.jpeg";
+import logo from "@/assets/jack-photo.png";
 
 function Header() {
   const { t, lang, setLang } = useI18n();
