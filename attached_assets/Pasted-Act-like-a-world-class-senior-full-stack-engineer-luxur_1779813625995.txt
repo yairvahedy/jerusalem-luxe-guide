@@ -1,0 +1,251 @@
+Act like a world-class senior full-stack engineer, luxury UI/UX designer, SaaS architect, and mobile-first real estate platform specialist.
+
+Your goal is to significantly upgrade my existing luxury Jerusalem real estate website project into a fully dynamic, CMS-powered luxury real estate platform with:
+1) A modernized ultra-premium UI
+2) A powerful mobile-first admin dashboard
+3) A complete multi-agent system
+4) Fully editable website content from the admin portal
+5) A scalable Supabase architecture
+
+IMPORTANT:
+This website must be fully editable WITHOUT touching code after setup.
+
+ALL of the following must be editable from the admin portal:
+- Listings
+- Photos
+- Property details
+- Agents
+- Homepage text
+- Buttons
+- Colors
+- Images
+- Neighborhood pages
+- Contact info
+- Featured listings
+- Sold listings
+- CTA text
+- Hero sections
+
+The goal is to make the platform usable by non-technical users entirely from mobile devices.
+
+TECH STACK:
+- React + Vite
+- Tailwind CSS
+- Supabase
+- Fully responsive mobile-first architecture
+- Clean scalable reusable component structure
+
+CRITICAL UI UPDATE:
+Update ALL green buttons and CTA elements across the entire website to:
+#3dab2c
+
+Ensure:
+- consistent branding
+- premium hover states
+- elegant transitions
+- luxury modern styling
+
+MODERNIZE THE ENTIRE UI:
+Upgrade:
+- typography
+- spacing
+- visual hierarchy
+- animations
+- cards
+- property galleries
+- navigation
+- mobile responsiveness
+- dashboard styling
+- loading states
+- filtering experience
+
+The UI should feel:
+- modern luxury
+- cinematic
+- premium
+- minimal
+- highly polished
+- mobile-first
+- inspired by elite real estate brands and Apple-level UX
+
+AGENTS PAGE:
+Create a dedicated luxury “Agents” page.
+
+The page should:
+- look premium and modern
+- include elegant agent cards
+- support bilingual English/Hebrew text
+- include empty placeholder portrait images that can later be replaced from the admin dashboard
+- include WhatsApp/call CTA buttons
+- include modern responsive layouts
+- include hover animations
+- be fully editable from the admin portal
+
+AGENTS TO ADD:
+
+Agent 1:
+- Name EN: Yehuda Klein
+- Name HE: יהודה קליין
+- Phone: +972 58-542-0333
+
+Agent 2:
+- Name EN: Perla Goldenberg
+- Name HE: פרלה גולדנברג
+- Phone: +972 52-578-2001
+
+Agent 3:
+- Name EN: Pinchas Liker
+- Name HE: פנחס לייקר
+- Phone: +972 54-201-8974
+
+Agent 4:
+- Name EN: Yair Aronstam
+- Name HE: יאיר ארונסתם
+- Phone: +972 50-553-2889
+
+MULTI-AGENT SYSTEM:
+Each listing must support assigning an agent from a dropdown menu inside the admin dashboard.
+
+When creating/editing listings:
+- add an “Assigned Agent” dropdown selector
+- link listings dynamically to the selected agent profile
+- show the assigned agent on the public property page
+- allow filtering listings by agent
+
+ADMIN DASHBOARD REQUIREMENTS:
+The admin dashboard must be:
+- extremely simple
+- mobile optimized
+- touch-friendly
+- visually modern
+- intuitive for non-technical users
+
+The admin portal should allow:
+- adding/editing/deleting listings
+- managing agents
+- replacing agent photos
+- changing colors/buttons/site text
+- uploading property photos
+- editing homepage sections
+- editing neighborhood pages
+- editing CTA text
+- editing featured listings
+- editing sold properties
+
+LISTING FORM REQUIREMENTS:
+The listing upload/edit form must include:
+
+Basic Info:
+- Property title
+- Description
+- Address
+- Neighborhood
+- Sale or rent
+- Assigned agent dropdown
+
+Pricing:
+- Price in shekels
+- Rent per month in shekels
+- Arnona (optional)
+
+Property Specs:
+- Square meters
+- Bedrooms
+- Bathrooms
+
+Property Facts Section:
+- Mamad
+- Balcony
+- Elevator
+- Parking
+- Storage
+- Sukka balcony
+- Accessibility
+- Renovated
+- Furnished
+- Air conditioning
+
+MEDIA:
+- Drag-and-drop image uploads
+- Multiple image uploader
+- Live image previews
+- Reorder images
+- Video tour link
+
+PROPERTY PAGE:
+Each property page must dynamically display:
+- assigned agent
+- WhatsApp CTA
+- call CTA
+- image gallery
+- property facts
+- listing details
+- related properties
+
+CMS REQUIREMENTS:
+Refactor the website into a fully dynamic CMS architecture.
+
+Requirements:
+- Remove hardcoded content
+- Store all content in Supabase
+- Create editable settings tables
+- Allow dynamic editing of:
+  - colors
+  - CTA labels
+  - section text
+  - homepage content
+  - images
+  - branding
+
+Create a “Site Settings” section inside the admin dashboard where admins can:
+- change button colors
+- update logos
+- update homepage text
+- change hero images
+- update contact details
+- manage navigation items
+
+SUPABASE REQUIREMENTS:
+Create proper relational database architecture:
+- agents table
+- listings table
+- listing_images table
+- neighborhoods table
+- homepage_content table
+- site_settings table
+- authentication table
+
+Include:
+- role-based authentication
+- secure admin access
+- optimized image storage
+- scalable architecture
+
+UX REQUIREMENTS:
+- Fast mobile experience
+- Smooth animations
+- Elegant transitions
+- Sticky mobile CTAs
+- Modern loading states
+- Premium interactions
+- Responsive admin dashboard
+- Easy one-handed mobile usage
+
+IMPORTANT:
+- Prioritize maintainability
+- Prioritize scalability
+- Prioritize ease of editing
+- Avoid generic realtor templates
+- Avoid outdated dashboards
+- Avoid cluttered layouts
+- Avoid hardcoded values
+
+Before finalizing:
+1) Verify all content is editable from the admin dashboard
+2) Verify all listings support assigned agents
+3) Verify the mobile admin experience is excellent
+4) Verify all green buttons use #3dab2c
+5) Verify the website feels modern, cinematic, and premium
+6) Verify the platform is scalable for future agents and listings
+
+Take a deep breath and work on this problem step-by-step.

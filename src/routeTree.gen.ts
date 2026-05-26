@@ -18,6 +18,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIndexRouteImport } from './routes/listings.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ListingsSlugRouteImport } from './routes/listings.$slug'
+import { Route as AdminNeighborhoodsRouteImport } from './routes/admin.neighborhoods'
+import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as AdminListingsIndexRouteImport } from './routes/admin.listings.index'
 import { Route as AdminListingsNewRouteImport } from './routes/admin.listings.new'
@@ -68,6 +70,16 @@ const ListingsSlugRoute = ListingsSlugRouteImport.update({
   path: '/listings/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminNeighborhoodsRoute = AdminNeighborhoodsRouteImport.update({
+  id: '/neighborhoods',
+  path: '/neighborhoods',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentRoute = AdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
@@ -97,6 +109,8 @@ export interface FileRoutesByFullPath {
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/listings/': typeof ListingsIndexRoute
@@ -111,6 +125,8 @@ export interface FileRoutesByTo {
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/listings': typeof ListingsIndexRoute
@@ -127,6 +143,8 @@ export interface FileRoutesById {
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/listings/': typeof ListingsIndexRoute
@@ -144,6 +162,8 @@ export interface FileRouteTypes {
     | '/neighborhoods'
     | '/sold'
     | '/admin/agents'
+    | '/admin/content'
+    | '/admin/neighborhoods'
     | '/listings/$slug'
     | '/admin/'
     | '/listings/'
@@ -158,6 +178,8 @@ export interface FileRouteTypes {
     | '/neighborhoods'
     | '/sold'
     | '/admin/agents'
+    | '/admin/content'
+    | '/admin/neighborhoods'
     | '/listings/$slug'
     | '/admin'
     | '/listings'
@@ -173,6 +195,8 @@ export interface FileRouteTypes {
     | '/neighborhoods'
     | '/sold'
     | '/admin/agents'
+    | '/admin/content'
+    | '/admin/neighborhoods'
     | '/listings/$slug'
     | '/admin/'
     | '/listings/'
@@ -257,6 +281,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/neighborhoods': {
+      id: '/admin/neighborhoods'
+      path: '/neighborhoods'
+      fullPath: '/admin/neighborhoods'
+      preLoaderRoute: typeof AdminNeighborhoodsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content': {
+      id: '/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/agents': {
       id: '/admin/agents'
       path: '/agents'
@@ -290,6 +328,8 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminContentRoute: typeof AdminContentRoute
+  AdminNeighborhoodsRoute: typeof AdminNeighborhoodsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminListingsNewRoute: typeof AdminListingsNewRoute
   AdminListingsIndexRoute: typeof AdminListingsIndexRoute
@@ -298,6 +338,8 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminContentRoute: AdminContentRoute,
+  AdminNeighborhoodsRoute: AdminNeighborhoodsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminListingsNewRoute: AdminListingsNewRoute,
   AdminListingsIndexRoute: AdminListingsIndexRoute,

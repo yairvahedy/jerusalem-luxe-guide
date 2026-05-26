@@ -1,7 +1,7 @@
--- JF Realty — Supabase schema
--- Run this entire file in Supabase SQL editor
+-- JF Realty — Supabase schema (complete)
+-- Run this entire file in Supabase SQL editor (safe to re-run: uses IF NOT EXISTS + ON CONFLICT DO NOTHING)
 
--- Agents table
+-- ── Agents ────────────────────────────────────────────────────────────────────
 create table if not exists public.agents (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.agents (
   created_at timestamptz not null default now()
 );
 
--- Listings table
+-- ── Listings ──────────────────────────────────────────────────────────────────
 create table if not exists public.listings (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
@@ -40,55 +40,108 @@ create table if not exists public.listings (
   updated_at timestamptz not null default now()
 );
 
--- Storage bucket for property images
+-- ── Neighborhoods ─────────────────────────────────────────────────────────────
+create table if not exists public.neighborhoods (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  slug text not null unique,
+  description text,
+  image_url text,
+  display_order integer not null default 0,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+-- ── Site Content (flexible JSON key-value store) ───────────────────────────────
+create table if not exists public.site_content (
+  key text primary key,
+  value jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+-- ── Storage bucket ────────────────────────────────────────────────────────────
 insert into storage.buckets (id, name, public)
 values ('property-images', 'property-images', true)
 on conflict do nothing;
 
 -- Storage policies
-create policy "Anyone can view property images"
-  on storage.objects for select
-  using (bucket_id = 'property-images');
+do $$ begin
+  create policy "Anyone can view property images"
+    on storage.objects for select
+    using (bucket_id = 'property-images');
+exception when duplicate_object then null; end $$;
 
-create policy "Authenticated users can upload property images"
-  on storage.objects for insert
-  with check (bucket_id = 'property-images' and auth.role() = 'authenticated');
+do $$ begin
+  create policy "Authenticated users can upload property images"
+    on storage.objects for insert
+    with check (bucket_id = 'property-images' and auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
 
-create policy "Authenticated users can delete property images"
-  on storage.objects for delete
-  using (bucket_id = 'property-images' and auth.role() = 'authenticated');
+do $$ begin
+  create policy "Authenticated users can delete property images"
+    on storage.objects for delete
+    using (bucket_id = 'property-images' and auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
 
--- RLS
+-- ── RLS ───────────────────────────────────────────────────────────────────────
 alter table public.agents enable row level security;
 alter table public.listings enable row level security;
+alter table public.neighborhoods enable row level security;
+alter table public.site_content enable row level security;
 
--- Agents policies
-create policy "Anyone can read active agents" on public.agents
-  for select using (active = true);
+-- Agents
+do $$ begin
+  create policy "Anyone can read active agents" on public.agents
+    for select using (active = true);
+exception when duplicate_object then null; end $$;
 
-create policy "Authenticated can manage agents" on public.agents
-  for all using (auth.role() = 'authenticated');
+do $$ begin
+  create policy "Authenticated can manage agents" on public.agents
+    for all using (auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
 
--- Listings policies
-create policy "Anyone can read available/sold listings" on public.listings
-  for select using (status in ('available', 'sold'));
+-- Listings
+do $$ begin
+  create policy "Anyone can read available/sold listings" on public.listings
+    for select using (status in ('available', 'sold'));
+exception when duplicate_object then null; end $$;
 
-create policy "Authenticated can manage listings" on public.listings
-  for all using (auth.role() = 'authenticated');
+do $$ begin
+  create policy "Authenticated can manage listings" on public.listings
+    for all using (auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
 
--- Seed Jack Freedman as default agent
+-- Neighborhoods
+do $$ begin
+  create policy "Anyone can read active neighborhoods" on public.neighborhoods
+    for select using (active = true);
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create policy "Authenticated can manage neighborhoods" on public.neighborhoods
+    for all using (auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
+
+-- Site content
+do $$ begin
+  create policy "Anyone can read site content" on public.site_content
+    for select using (true);
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create policy "Authenticated can manage site content" on public.site_content
+    for all using (auth.role() = 'authenticated');
+exception when duplicate_object then null; end $$;
+
+-- ── Seed: Jack Freedman ───────────────────────────────────────────────────────
 insert into public.agents (name, bio, whatsapp, phone, email, slug, active)
 values (
   'Jack Freedman',
   'Jerusalem''s luxury real estate specialist. Born and raised in Jerusalem, Jack brings unmatched local expertise and a deeply personal approach to every transaction.',
-  '972533985043',
-  '+972 53-398-5043',
-  'jack@jfrealty.co.il',
-  'jack-freedman',
-  true
+  '972533985043', '+972 53-398-5043', 'jack@jfrealty.co.il', 'jack-freedman', true
 ) on conflict (slug) do nothing;
 
--- Seed initial listings from static data
+-- ── Seed: Listings ───────────────────────────────────────────────────────────
 insert into public.listings (slug, title, price, type, neighborhood, bedrooms, bathrooms, sqm, balcony, mamad, elevator, parking, description, images, status, featured)
 values
   ('mamilla-penthouse-old-city-view', 'Mamilla Penthouse with Old City View', 18500000, 'sale', 'Mamilla', 4, 3, 240, true, true, true, true,
@@ -111,3 +164,25 @@ values
   ('sold-german-colony-townhouse', 'German Colony Townhouse', 11800000, 'sale', 'German Colony', 5, 4, 260, true, true, false, true,
    'Closed with an international buyer.', '{}', 'sold', false)
 on conflict (slug) do nothing;
+
+-- ── Seed: Neighborhoods ───────────────────────────────────────────────────────
+insert into public.neighborhoods (name, slug, description, display_order, active) values
+  ('Mamilla', 'mamilla', 'At the gates of the Old City. Luxury retail, hotels, and addresses with views that no other city can offer.', 1, true),
+  ('German Colony', 'german-colony', 'Tree-lined streets, restored Templar stone homes, and Jerusalem''s most coveted family neighborhood.', 2, true),
+  ('Rehavia', 'rehavia', 'Bauhaus elegance and intellectual heritage. Walkable, central, and quietly prestigious.', 3, true),
+  ('Talbiya', 'talbiya', 'Diplomats and dynasties. Stone villas, manicured gardens, and Jerusalem''s most refined zip code.', 4, true),
+  ('Old Katamon', 'old-katamon', 'Quiet, leafy streets and beautifully restored stone homes, beloved by families and diplomats alike.', 5, true),
+  ('City Center', 'city-center', 'The pulse of modern Jerusalem — walkable, vibrant, and always in demand.', 6, true)
+on conflict (slug) do nothing;
+
+-- ── Seed: Site Content ────────────────────────────────────────────────────────
+insert into public.site_content (key, value) values
+  ('hero', '{"eyebrow":"Luxury Jerusalem Real Estate","title":"Where Jerusalem''s most exceptional homes find their owners.","subtitle":"Private, curated, and personally guided by Jack Freedman."}'::jsonb),
+  ('stats', '[{"value":"₪2B+","label":"In transactions"},{"value":"150+","label":"Homes sold"},{"value":"12+","label":"Years in Jerusalem"},{"value":"100%","label":"Personal service"}]'::jsonb),
+  ('why_jack', '[{"title":"Jerusalem native expertise","body":"Born here. Raised here. Connected to every neighborhood worth knowing."},{"title":"Discreet, personal service","body":"Every client is handled directly — no juniors, no handoffs."},{"title":"International reach","body":"Fluent service for Israeli and overseas buyers, in English and Hebrew."},{"title":"Off-market access","body":"First call on properties that never reach a public listing."}]'::jsonb),
+  ('testimonials', '[{"quote":"Jack found us a home we didn''t know existed. Discreet, professional, and genuinely Jerusalem.","author":"S.K., New York"},{"quote":"From first call to closing, he was three steps ahead. The only agent we''ll ever use.","author":"Family R., Tel Aviv"},{"quote":"Knows every stone in this city. We trusted him completely — and he delivered.","author":"D.L., London"}]'::jsonb),
+  ('lifestyle', '{"title":"A Jerusalem address is more than a home.","subtitle":"Stone-walled mornings, golden-hour terraces, and a city that has chosen its residents carefully for three thousand years."}'::jsonb),
+  ('contact_banner', '{"title":"Looking for something specific?","subtitle":"Tell Jack what you''re searching for — he''ll find it."}'::jsonb),
+  ('site_info', '{"brand":"JF Realty","agent_name":"Jack Freedman","phone":"+972 53-398-5043","phone_display":"+972 53-398-5043","whatsapp":"972533985043","email":"jack@jfrealty.co.il","address":"Jerusalem, Israel","tagline":"Luxury Jerusalem real estate, personally guided."}'::jsonb),
+  ('about', '{"lead":"Jerusalem''s young luxury specialist — combining old-city instinct with modern service.","body1":"Jack Freedman represents a new generation of Jerusalem real estate. With deep roots in the city and a sharp eye for architecture, light, and value, he guides buyers from Israel and abroad through the city''s most desirable neighborhoods.","body2":"His approach is personal, discreet, and uncompromising. Every relationship begins with a conversation — and ends with the keys to a home worth waiting for."}'::jsonb)
+on conflict (key) do nothing;

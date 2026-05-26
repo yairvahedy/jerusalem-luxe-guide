@@ -1,5 +1,5 @@
-import { createFileRoute, Outlet, Link, useRouterState, redirect } from "@tanstack/react-router";
-import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, Plus } from "lucide-react";
+import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, FileText, MapPin } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import logo from "@/assets/jf-logo.jpeg";
@@ -30,6 +30,8 @@ function AdminLayout() {
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/admin/listings", label: "Listings", icon: List },
     { to: "/admin/agents", label: "Agents", icon: Users },
+    { to: "/admin/content", label: "Content", icon: FileText },
+    { to: "/admin/neighborhoods", label: "Neighborhoods", icon: MapPin },
   ];
 
   const isActive = (to: string, exact?: boolean) => {
@@ -39,15 +41,10 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white flex">
-      {/* Sidebar overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#141414] border-r border-white/[0.06] flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex items-center justify-between h-16 px-5 border-b border-white/[0.06] shrink-0">
           <div className="flex items-center gap-3">
@@ -77,25 +74,16 @@ function AdminLayout() {
         </nav>
 
         <div className="p-3 border-t border-white/[0.06] space-y-0.5">
-          <a
-            href="/"
-            target="_blank"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-white hover:bg-white/5 transition-colors"
-          >
+          <a href="/" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-white hover:bg-white/5 transition-colors">
             <Home className="size-4" /> View site
           </a>
-          <button
-            onClick={signOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-destructive hover:bg-white/5 transition-colors"
-          >
+          <button onClick={signOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-white/40 hover:text-destructive hover:bg-white/5 transition-colors">
             <LogOut className="size-4" /> Sign out
           </button>
         </div>
       </aside>
 
-      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 lg:overflow-auto">
-        {/* Mobile topbar */}
         <header className="lg:hidden flex items-center gap-4 h-16 px-5 border-b border-white/[0.06] bg-[#141414] shrink-0">
           <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white">
             <Menu className="size-5" />
@@ -137,47 +125,21 @@ function AdminLogin() {
           <h1 className="font-display text-2xl text-white">Admin Portal</h1>
           <p className="text-sm text-white/40 mt-1">JF Realty Jerusalem</p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full h-13 px-4 bg-white/[0.06] border border-white/[0.1] rounded-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 text-sm"
-              placeholder="admin@example.com"
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full h-13 px-4 bg-white/[0.06] border border-white/[0.1] rounded-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 text-sm" placeholder="admin@example.com" />
           </div>
           <div>
             <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full h-13 px-4 bg-white/[0.06] border border-white/[0.1] rounded-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 text-sm"
-              placeholder="••••••••"
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full h-13 px-4 bg-white/[0.06] border border-white/[0.1] rounded-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 text-sm" placeholder="••••••••" />
           </div>
-          {error && (
-            <div className="text-sm text-red-400 bg-red-900/20 border border-red-900/30 rounded-sm px-4 py-3">
-              {error}
-            </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-13 bg-white text-black rounded-sm text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          {error && <div className="text-sm text-red-400 bg-red-900/20 border border-red-900/30 rounded-sm px-4 py-3">{error}</div>}
+          <button type="submit" disabled={loading} className="w-full h-13 bg-white text-black rounded-sm text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
-
-        <p className="text-center text-[11px] text-white/25 mt-8">
-          Use your Supabase Auth credentials to access the admin portal.
-        </p>
+        <p className="text-center text-[11px] text-white/25 mt-8">Use your Supabase Auth credentials to access the admin portal.</p>
       </div>
     </div>
   );
