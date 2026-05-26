@@ -5,6 +5,7 @@
 create table if not exists public.agents (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  name_he text,
   bio text,
   portrait_url text,
   whatsapp text,
@@ -15,6 +16,9 @@ create table if not exists public.agents (
   created_at timestamptz not null default now()
 );
 
+-- Add name_he if upgrading from older schema
+alter table public.agents add column if not exists name_he text;
+
 -- ── Listings ──────────────────────────────────────────────────────────────────
 create table if not exists public.listings (
   id uuid primary key default gen_random_uuid(),
@@ -23,13 +27,21 @@ create table if not exists public.listings (
   price numeric not null default 0,
   type text not null default 'sale' check (type in ('sale', 'rent')),
   neighborhood text not null,
+  address text,
   bedrooms integer not null default 0,
   bathrooms integer not null default 0,
   sqm integer not null default 0,
+  arnona integer,
   balcony boolean not null default false,
   mamad boolean not null default false,
   elevator boolean not null default false,
   parking boolean not null default false,
+  storage boolean not null default false,
+  sukka_balcony boolean not null default false,
+  accessibility boolean not null default false,
+  renovated boolean not null default false,
+  furnished boolean not null default false,
+  air_conditioning boolean not null default false,
   description text,
   images text[] not null default '{}',
   video_url text,
@@ -39,6 +51,16 @@ create table if not exists public.listings (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Add new columns if upgrading from older schema
+alter table public.listings add column if not exists address text;
+alter table public.listings add column if not exists arnona integer;
+alter table public.listings add column if not exists storage boolean not null default false;
+alter table public.listings add column if not exists sukka_balcony boolean not null default false;
+alter table public.listings add column if not exists accessibility boolean not null default false;
+alter table public.listings add column if not exists renovated boolean not null default false;
+alter table public.listings add column if not exists furnished boolean not null default false;
+alter table public.listings add column if not exists air_conditioning boolean not null default false;
 
 -- ── Neighborhoods ─────────────────────────────────────────────────────────────
 create table if not exists public.neighborhoods (
@@ -133,12 +155,40 @@ do $$ begin
     for all using (auth.role() = 'authenticated');
 exception when duplicate_object then null; end $$;
 
--- ── Seed: Jack Freedman ───────────────────────────────────────────────────────
-insert into public.agents (name, bio, whatsapp, phone, email, slug, active)
+-- ── Seed: Agents ──────────────────────────────────────────────────────────────
+insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active)
 values (
-  'Jack Freedman',
+  'Jack Freedman', 'ג''ק פרידמן',
   'Jerusalem''s luxury real estate specialist. Born and raised in Jerusalem, Jack brings unmatched local expertise and a deeply personal approach to every transaction.',
   '972533985043', '+972 53-398-5043', 'jack@jfrealty.co.il', 'jack-freedman', true
+) on conflict (slug) do update set name_he = excluded.name_he;
+
+insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active)
+values (
+  'Yehuda Klein', 'יהודה קליין',
+  'Specializes in residential sales across Jerusalem''s finest neighborhoods with over a decade of experience.',
+  '972585420333', '+972 58-542-0333', 'yehuda@jfrealty.co.il', 'yehuda-klein', true
+) on conflict (slug) do nothing;
+
+insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active)
+values (
+  'Perla Goldenberg', 'פרלה גולדנברג',
+  'Bringing warmth and expertise to every client search. Fluent in Hebrew, English, and French.',
+  '972525782001', '+972 52-578-2001', 'perla@jfrealty.co.il', 'perla-goldenberg', true
+) on conflict (slug) do nothing;
+
+insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active)
+values (
+  'Pinchas Liker', 'פנחס לייקר',
+  'Focused on high-value properties and international clients seeking Jerusalem''s most exclusive addresses.',
+  '972542018974', '+972 54-201-8974', 'pinchas@jfrealty.co.il', 'pinchas-liker', true
+) on conflict (slug) do nothing;
+
+insert into public.agents (name, name_he, bio, whatsapp, phone, email, slug, active)
+values (
+  'Yair Aronstam', 'יאיר ארונסתם',
+  'Expert in Jerusalem''s rental market and investment properties. Known for fast closings and sharp negotiation.',
+  '972505532889', '+972 50-553-2889', 'yair@jfrealty.co.il', 'yair-aronstam', true
 ) on conflict (slug) do nothing;
 
 -- ── Seed: Listings ───────────────────────────────────────────────────────────
@@ -184,5 +234,6 @@ insert into public.site_content (key, value) values
   ('lifestyle', '{"title":"A Jerusalem address is more than a home.","subtitle":"Stone-walled mornings, golden-hour terraces, and a city that has chosen its residents carefully for three thousand years."}'::jsonb),
   ('contact_banner', '{"title":"Looking for something specific?","subtitle":"Tell Jack what you''re searching for — he''ll find it."}'::jsonb),
   ('site_info', '{"brand":"JF Realty","agent_name":"Jack Freedman","phone":"+972 53-398-5043","phone_display":"+972 53-398-5043","whatsapp":"972533985043","email":"jack@jfrealty.co.il","address":"Jerusalem, Israel","tagline":"Luxury Jerusalem real estate, personally guided."}'::jsonb),
-  ('about', '{"lead":"Jerusalem''s young luxury specialist — combining old-city instinct with modern service.","body1":"Jack Freedman represents a new generation of Jerusalem real estate. With deep roots in the city and a sharp eye for architecture, light, and value, he guides buyers from Israel and abroad through the city''s most desirable neighborhoods.","body2":"His approach is personal, discreet, and uncompromising. Every relationship begins with a conversation — and ends with the keys to a home worth waiting for."}'::jsonb)
+  ('about', '{"lead":"Jerusalem''s young luxury specialist — combining old-city instinct with modern service.","body1":"Jack Freedman represents a new generation of Jerusalem real estate. With deep roots in the city and a sharp eye for architecture, light, and value, he guides buyers from Israel and abroad through the city''s most desirable neighborhoods.","body2":"His approach is personal, discreet, and uncompromising. Every relationship begins with a conversation — and ends with the keys to a home worth waiting for."}'::jsonb),
+  ('appearance', '{"accent_color":"#3dab2c","logo_url":"","hero_image_url":""}'::jsonb)
 on conflict (key) do nothing;

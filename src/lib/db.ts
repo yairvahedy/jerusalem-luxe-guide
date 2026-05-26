@@ -4,7 +4,7 @@ import type {
   Agent, AgentInsert, AgentUpdate,
   Neighborhood, NeighborhoodInsert, NeighborhoodUpdate,
   HeroContent, StatItem, WhyItem, TestimonialItem,
-  LifestyleContent, ContactBannerContent, SiteInfo, AboutContent,
+  LifestyleContent, ContactBannerContent, SiteInfo, AboutContent, AppearanceContent,
 } from "./database.types";
 
 // ── Listings ──────────────────────────────────────────────────────────────────
@@ -224,6 +224,15 @@ export async function getSiteInfo(): Promise<SiteInfo> {
 export async function getAboutContent(): Promise<AboutContent> {
   const d = await getSiteContent<AboutContent>("about");
   return d ?? { lead: "Jerusalem's young luxury specialist — combining old-city instinct with modern service.", body1: "Jack Freedman represents a new generation of Jerusalem real estate.", body2: "His approach is personal, discreet, and uncompromising." };
+}
+
+export async function getAppearance(): Promise<AppearanceContent> {
+  const d = await getSiteContent<AppearanceContent>("appearance");
+  return d ?? { accent_color: "#3dab2c", logo_url: "", hero_image_url: "" };
+}
+
+export async function upsertAppearance(value: AppearanceContent): Promise<void> {
+  await upsertSiteContent("appearance", value);
 }
 
 // ── Storage ───────────────────────────────────────────────────────────────────

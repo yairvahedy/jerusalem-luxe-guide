@@ -20,8 +20,14 @@ function AboutPage() {
           <p className="mt-4 text-foreground/70 leading-relaxed max-w-xl">{t.about.body1}</p>
           <p className="mt-4 text-foreground/70 leading-relaxed max-w-xl">{t.about.body2}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={waLink()} target="_blank" rel="noopener" className="inline-flex items-center gap-2 h-12 px-6 rounded-sm bg-[#25D366] text-white font-medium"><MessageCircle className="size-4" /> {t.cta.whatsapp}</a>
-            <a href={telLink} className="inline-flex items-center gap-2 h-12 px-6 rounded-sm bg-primary text-primary-foreground font-medium"><Phone className="size-4" /> {t.cta.call}</a>
+            <a href={waLink()} target="_blank" rel="noopener"
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-sm bg-[#3dab2c] text-white font-medium hover:bg-[#22c45e] transition-colors">
+              <MessageCircle className="size-4" /> {t.cta.whatsapp}
+            </a>
+            <a href={telLink}
+              className="inline-flex items-center gap-2 h-12 px-6 rounded-sm bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+              <Phone className="size-4" /> {t.cta.call}
+            </a>
           </div>
         </div>
         <div className="order-1 lg:order-2 relative aspect-[3/4] rounded-sm overflow-hidden bg-muted">

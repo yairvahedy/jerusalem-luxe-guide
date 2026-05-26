@@ -1,16 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
-import { getAllAgentsAdmin, createAgent, updateAgent, deleteAgent } from "@/lib/db";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { getAllAgentsAdmin, createAgent, updateAgent, deleteAgent, uploadImage } from "@/lib/db";
 import type { Agent, AgentInsert } from "@/lib/database.types";
-import { uploadImage } from "@/lib/db";
 
 export const Route = createFileRoute("/admin/agents")({
   component: AdminAgents,
 });
 
 const EMPTY: AgentInsert = {
-  name: "", bio: "", whatsapp: "", phone: "", email: "",
+  name: "", name_he: "", bio: "", whatsapp: "", phone: "", email: "",
   slug: "", portrait_url: "", active: true,
 };
 
@@ -39,7 +38,12 @@ function AdminAgents() {
   };
 
   const openEdit = (a: Agent) => {
-    setForm({ name: a.name, bio: a.bio ?? "", whatsapp: a.whatsapp ?? "", phone: a.phone ?? "", email: a.email ?? "", slug: a.slug, portrait_url: a.portrait_url ?? "", active: a.active });
+    setForm({
+      name: a.name, name_he: a.name_he ?? "",
+      bio: a.bio ?? "", whatsapp: a.whatsapp ?? "",
+      phone: a.phone ?? "", email: a.email ?? "",
+      slug: a.slug, portrait_url: a.portrait_url ?? "", active: a.active,
+    });
     setEditing(a);
     setIsNew(false);
     setError("");
@@ -47,7 +51,8 @@ function AdminAgents() {
 
   const closeForm = () => { setEditing(null); setIsNew(false); setError(""); };
 
-  const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const generateSlug = (name: string) =>
+    name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const handlePortraitUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,24 +123,25 @@ function AdminAgents() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field label="Full name *" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v, slug: f.slug || generateSlug(v) }))} placeholder="Jack Freedman" />
+            <Field label="Full name (English) *" value={form.name ?? ""} onChange={(v) => setForm((f) => ({ ...f, name: v, slug: f.slug || generateSlug(v) }))} placeholder="Jack Freedman" />
+            <Field label="שם מלא (עברית)" value={form.name_he ?? ""} onChange={(v) => setForm((f) => ({ ...f, name_he: v }))} placeholder="ג'ק פרידמן" />
             <Field label="Slug *" value={form.slug ?? ""} onChange={(v) => setForm((f) => ({ ...f, slug: v }))} placeholder="jack-freedman" />
             <Field label="Phone" value={form.phone ?? ""} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} placeholder="+972 53-398-5043" />
-            <Field label="WhatsApp number" value={form.whatsapp ?? ""} onChange={(v) => setForm((f) => ({ ...f, whatsapp: v }))} placeholder="972533985043" />
+            <Field label="WhatsApp number (digits only)" value={form.whatsapp ?? ""} onChange={(v) => setForm((f) => ({ ...f, whatsapp: v }))} placeholder="972533985043" />
             <Field label="Email" value={form.email ?? ""} onChange={(v) => setForm((f) => ({ ...f, email: v }))} placeholder="agent@jfrealty.co.il" />
             <div>
               <label className="block text-[11px] uppercase tracking-widest text-white/40 mb-2">Portrait photo</label>
               <input type="file" accept="image/*" onChange={handlePortraitUpload} className="hidden" id="portrait-upload" />
               <label htmlFor="portrait-upload" className="flex items-center gap-3 cursor-pointer">
-                <div className="w-14 h-14 rounded-md bg-white/[0.06] overflow-hidden border border-white/[0.1] flex items-center justify-center shrink-0">
+                <div className="w-16 h-16 rounded-md bg-white/[0.06] overflow-hidden border border-white/[0.1] flex items-center justify-center shrink-0">
                   {form.portrait_url ? (
                     <img src={form.portrait_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-white/20 text-xs">+</span>
+                    <span className="text-white/20 text-2xl font-light">{form.name?.[0] ?? "+"}</span>
                   )}
                 </div>
                 <span className="text-sm text-white/50 hover:text-white transition-colors">
-                  {uploading ? "Uploading…" : "Upload photo"}
+                  {uploading ? "Uploading…" : "Upload portrait photo"}
                 </span>
               </label>
             </div>
@@ -151,7 +157,7 @@ function AdminAgents() {
             </div>
             <div className="sm:col-span-2 flex items-center gap-3">
               <input type="checkbox" id="active" checked={form.active ?? true} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} className="rounded" />
-              <label htmlFor="active" className="text-sm text-white/60">Active (visible on public site)</label>
+              <label htmlFor="active" className="text-sm text-white/60">Active (visible on public Agents page)</label>
             </div>
           </div>
 
@@ -185,14 +191,15 @@ function AdminAgents() {
                 {a.portrait_url ? (
                   <img src={a.portrait_url} alt={a.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">{a.name[0]}</div>
+                  <div className="w-full h-full flex items-center justify-center text-white/30 text-xl font-display">{a.name[0]}</div>
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-medium text-white">{a.name}</div>
-                    <div className="text-xs text-white/40 mt-0.5">{a.email}</div>
+                    {a.name_he && <div className="text-xs text-white/40 mt-0.5" dir="rtl">{a.name_he}</div>}
+                    <div className="text-xs text-white/30 mt-0.5">{a.phone}</div>
                   </div>
                   <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-sm shrink-0 ${a.active ? "bg-emerald-500/15 text-emerald-400" : "bg-white/10 text-white/30"}`}>
                     {a.active ? "Active" : "Inactive"}

@@ -15,6 +15,7 @@ function Header() {
     { to: "/", label: t.nav.home },
     { to: "/listings", label: t.nav.listings },
     { to: "/neighborhoods", label: t.nav.neighborhoods },
+    { to: "/agents", label: lang === "he" ? "סוכנים" : "Agents" },
     { to: "/sold", label: t.nav.sold },
     { to: "/about", label: t.nav.about },
     { to: "/contact", label: t.nav.contact },
@@ -33,7 +34,7 @@ function Header() {
           </div>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden lg:flex items-center gap-6">
           {nav.map((n) => (
             <Link
               key={n.to}
@@ -93,7 +94,7 @@ function Header() {
             ))}
             <div className="pt-5 pb-2 flex gap-3">
               <a href={waLink()} target="_blank" rel="noopener"
-                className="flex-1 flex items-center justify-center gap-2 h-12 bg-[#25D366] text-white rounded-sm text-sm font-medium">
+                className="flex-1 flex items-center justify-center gap-2 h-12 bg-[#3dab2c] text-white rounded-sm text-sm font-medium hover:bg-[#22c45e] transition-colors">
                 <MessageCircle className="size-4" /> WhatsApp
               </a>
               <a href={telLink}
@@ -115,7 +116,7 @@ function Header() {
 }
 
 function Footer() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const router = useRouterState();
   const isAdmin = router.location.pathname.startsWith("/admin");
   if (isAdmin) return null;
@@ -158,6 +159,7 @@ function Footer() {
             {[
               { to: "/listings", label: t.nav.listings },
               { to: "/neighborhoods", label: t.nav.neighborhoods },
+              { to: "/agents", label: lang === "he" ? "סוכנים" : "Agents" },
               { to: "/sold", label: t.nav.sold },
               { to: "/about", label: t.nav.about },
               { to: "/contact", label: t.nav.contact },
@@ -189,7 +191,7 @@ function StickyMobileCTA() {
       <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-background via-background/90 to-transparent">
         <div className="grid grid-cols-2 gap-2 pointer-events-auto">
           <a href={waLink()} target="_blank" rel="noopener"
-            className="flex items-center justify-center gap-2 h-13 rounded-sm bg-[#25D366] text-white font-medium text-sm shadow-lg shadow-black/15 active:scale-[0.98] transition-transform">
+            className="flex items-center justify-center gap-2 h-13 rounded-sm bg-[#3dab2c] text-white font-medium text-sm shadow-lg shadow-black/15 active:scale-[0.98] transition-transform hover:bg-[#22c45e]">
             <MessageCircle className="size-4" /> {t.cta.whatsapp}
           </a>
           <a href={telLink}
@@ -211,7 +213,7 @@ function FloatingDesktopCTA() {
       href={waLink()}
       target="_blank"
       rel="noopener"
-      className="hidden lg:flex fixed bottom-7 right-7 z-40 items-center gap-2.5 h-14 px-6 rounded-full text-white font-medium shadow-2xl shadow-black/25 hover:scale-[1.04] transition-transform bg-[#3dab2c]"
+      className="hidden lg:flex fixed bottom-7 right-7 z-40 items-center gap-2.5 h-14 px-6 rounded-full text-white font-medium shadow-2xl shadow-black/25 hover:scale-[1.04] transition-transform bg-[#3dab2c] hover:bg-[#22c45e]"
     >
       <MessageCircle className="size-5" /> WhatsApp Jack
     </a>

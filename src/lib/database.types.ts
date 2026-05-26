@@ -7,6 +7,7 @@ export type Database = {
         Row: {
           id: string;
           name: string;
+          name_he: string | null;
           bio: string | null;
           portrait_url: string | null;
           whatsapp: string | null;
@@ -19,6 +20,7 @@ export type Database = {
         Insert: {
           id?: string;
           name: string;
+          name_he?: string | null;
           bio?: string | null;
           portrait_url?: string | null;
           whatsapp?: string | null;
@@ -31,6 +33,7 @@ export type Database = {
         Update: {
           id?: string;
           name?: string;
+          name_he?: string | null;
           bio?: string | null;
           portrait_url?: string | null;
           whatsapp?: string | null;
@@ -49,13 +52,21 @@ export type Database = {
           price: number;
           type: "sale" | "rent";
           neighborhood: string;
+          address: string | null;
           bedrooms: number;
           bathrooms: number;
           sqm: number;
+          arnona: number | null;
           balcony: boolean;
           mamad: boolean;
           elevator: boolean;
           parking: boolean;
+          storage: boolean;
+          sukka_balcony: boolean;
+          accessibility: boolean;
+          renovated: boolean;
+          furnished: boolean;
+          air_conditioning: boolean;
           description: string | null;
           images: string[];
           video_url: string | null;
@@ -72,13 +83,21 @@ export type Database = {
           price?: number;
           type?: "sale" | "rent";
           neighborhood: string;
+          address?: string | null;
           bedrooms?: number;
           bathrooms?: number;
           sqm?: number;
+          arnona?: number | null;
           balcony?: boolean;
           mamad?: boolean;
           elevator?: boolean;
           parking?: boolean;
+          storage?: boolean;
+          sukka_balcony?: boolean;
+          accessibility?: boolean;
+          renovated?: boolean;
+          furnished?: boolean;
+          air_conditioning?: boolean;
           description?: string | null;
           images?: string[];
           video_url?: string | null;
@@ -95,13 +114,21 @@ export type Database = {
           price?: number;
           type?: "sale" | "rent";
           neighborhood?: string;
+          address?: string | null;
           bedrooms?: number;
           bathrooms?: number;
           sqm?: number;
+          arnona?: number | null;
           balcony?: boolean;
           mamad?: boolean;
           elevator?: boolean;
           parking?: boolean;
+          storage?: boolean;
+          sukka_balcony?: boolean;
+          accessibility?: boolean;
+          renovated?: boolean;
+          furnished?: boolean;
+          air_conditioning?: boolean;
           description?: string | null;
           images?: string[];
           video_url?: string | null;
@@ -184,3 +211,4 @@ export type LifestyleContent = { title: string; subtitle: string };
 export type ContactBannerContent = { title: string; subtitle: string };
 export type SiteInfo = { brand: string; agent_name: string; phone: string; phone_display: string; whatsapp: string; email: string; address: string; tagline: string };
 export type AboutContent = { lead: string; body1: string; body2: string };
+export type AppearanceContent = { accent_color: string; logo_url: string; hero_image_url: string };

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, FileText, MapPin } from "lucide-react";
+import { LayoutDashboard, List, Users, LogOut, Menu, X, Home, FileText, MapPin, Settings } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import logo from "@/assets/jf-logo.jpeg";
@@ -32,6 +32,7 @@ function AdminLayout() {
     { to: "/admin/agents", label: "Agents", icon: Users },
     { to: "/admin/content", label: "Content", icon: FileText },
     { to: "/admin/neighborhoods", label: "Neighborhoods", icon: MapPin },
+    { to: "/admin/settings", label: "Settings", icon: Settings },
   ];
 
   const isActive = (to: string, exact?: boolean) => {

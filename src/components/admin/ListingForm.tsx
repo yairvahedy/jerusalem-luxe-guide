@@ -1,8 +1,6 @@
-import { useState, useRef, useCallback } from "react";
-import { Upload, X, Star, GripVertical, Video, Save, ChevronDown } from "lucide-react";
-import { uploadImage } from "@/lib/db";
-import { getAllAgentsAdmin } from "@/lib/db";
-import { useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Upload, X, Star, GripVertical, Video, Save } from "lucide-react";
+import { uploadImage, getAllAgentsAdmin } from "@/lib/db";
 import type { DbListing, DbListingInsert, Agent } from "@/lib/database.types";
 
 type Props = {
@@ -29,13 +27,21 @@ export function ListingForm({ initialData, onSave }: Props) {
     price: initialData?.price?.toString() ?? "",
     type: initialData?.type ?? "sale",
     neighborhood: initialData?.neighborhood ?? "",
+    address: initialData?.address ?? "",
     bedrooms: initialData?.bedrooms?.toString() ?? "0",
     bathrooms: initialData?.bathrooms?.toString() ?? "0",
     sqm: initialData?.sqm?.toString() ?? "0",
+    arnona: initialData?.arnona?.toString() ?? "",
     balcony: initialData?.balcony ?? false,
     mamad: initialData?.mamad ?? false,
     elevator: initialData?.elevator ?? false,
     parking: initialData?.parking ?? false,
+    storage: initialData?.storage ?? false,
+    sukka_balcony: initialData?.sukka_balcony ?? false,
+    accessibility: initialData?.accessibility ?? false,
+    renovated: initialData?.renovated ?? false,
+    furnished: initialData?.furnished ?? false,
+    air_conditioning: initialData?.air_conditioning ?? false,
     description: initialData?.description ?? "",
     video_url: initialData?.video_url ?? "",
     status: initialData?.status ?? "available",
@@ -109,13 +115,21 @@ export function ListingForm({ initialData, onSave }: Props) {
         price: parseFloat(form.price) || 0,
         type: form.type as "sale" | "rent",
         neighborhood: form.neighborhood,
+        address: form.address || null,
         bedrooms: parseInt(form.bedrooms) || 0,
         bathrooms: parseInt(form.bathrooms) || 0,
         sqm: parseInt(form.sqm) || 0,
+        arnona: form.arnona ? parseInt(form.arnona) : null,
         balcony: form.balcony,
         mamad: form.mamad,
         elevator: form.elevator,
         parking: form.parking,
+        storage: form.storage,
+        sukka_balcony: form.sukka_balcony,
+        accessibility: form.accessibility,
+        renovated: form.renovated,
+        furnished: form.furnished,
+        air_conditioning: form.air_conditioning,
         description: form.description || null,
         video_url: form.video_url || null,
         images,
@@ -135,15 +149,13 @@ export function ListingForm({ initialData, onSave }: Props) {
       {/* Status bar */}
       <div className="flex flex-wrap items-center gap-3 pb-6 border-b border-white/[0.08]">
         <StatusSelect value={form.status} onChange={(v) => set("status", v)} />
-        <label className="flex items-center gap-2 cursor-pointer select-none">
-          <div
-            onClick={() => set("featured", !form.featured)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${form.featured ? "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20" : "bg-white/[0.05] text-white/40 border border-white/[0.08] hover:bg-white/[0.08]"}`}
-          >
-            <Star className="size-3.5" fill={form.featured ? "currentColor" : "none"} />
-            Featured
-          </div>
-        </label>
+        <div
+          onClick={() => set("featured", !form.featured)}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm cursor-pointer transition-colors ${form.featured ? "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20" : "bg-white/[0.05] text-white/40 border border-white/[0.08] hover:bg-white/[0.08]"}`}
+        >
+          <Star className="size-3.5" fill={form.featured ? "currentColor" : "none"} />
+          Featured
+        </div>
         <div className="flex items-center gap-2 ml-auto">
           <div
             onClick={() => set("type", form.type === "sale" ? "rent" : "sale")}
@@ -166,7 +178,7 @@ export function ListingForm({ initialData, onSave }: Props) {
         />
       </div>
 
-      {/* Price + neighborhood */}
+      {/* Price + Neighborhood */}
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
           <label className="admin-label">Price (₪) — leave 0 for "on request"</label>
@@ -184,6 +196,29 @@ export function ListingForm({ initialData, onSave }: Props) {
             <option value="" disabled>Select neighborhood</option>
             {NEIGHBORHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
           </select>
+        </div>
+      </div>
+
+      {/* Address + Arnona */}
+      <div className="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label className="admin-label">Street address</label>
+          <input
+            value={form.address}
+            onChange={(e) => set("address", e.target.value)}
+            placeholder="e.g. 12 Mamilla Avenue"
+            className="admin-input"
+          />
+        </div>
+        <div>
+          <label className="admin-label">Arnona / Municipal tax (₪ / year, optional)</label>
+          <input
+            type="number"
+            value={form.arnona}
+            onChange={(e) => set("arnona", e.target.value)}
+            placeholder="12000"
+            className="admin-input"
+          />
         </div>
       </div>
 
@@ -205,18 +240,24 @@ export function ListingForm({ initialData, onSave }: Props) {
 
       {/* Features */}
       <div>
-        <label className="admin-label">Features</label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <label className="admin-label mb-3 block">Property features</label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-5">
           {[
             { key: "balcony", label: "Balcony" },
-            { key: "mamad", label: "Mamad" },
+            { key: "mamad", label: "Mamad (safe room)" },
             { key: "elevator", label: "Elevator" },
             { key: "parking", label: "Parking" },
+            { key: "storage", label: "Storage room" },
+            { key: "sukka_balcony", label: "Sukka balcony" },
+            { key: "accessibility", label: "Accessibility" },
+            { key: "renovated", label: "Renovated" },
+            { key: "furnished", label: "Furnished" },
+            { key: "air_conditioning", label: "Air conditioning" },
           ].map((f) => (
-            <label key={f.key} className="flex items-center gap-3 cursor-pointer">
+            <label key={f.key} className="flex items-center gap-3 cursor-pointer py-1">
               <div
                 onClick={() => set(f.key, !form[f.key as keyof typeof form])}
-                className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${form[f.key as keyof typeof form] ? "bg-white border-white" : "border-white/20 bg-white/[0.04]"}`}
+                className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${form[f.key as keyof typeof form] ? "bg-white border-white" : "border-white/20 bg-white/[0.04]"}`}
               >
                 {form[f.key as keyof typeof form] && <svg className="w-3 h-3 text-black" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>}
               </div>
@@ -254,8 +295,8 @@ export function ListingForm({ initialData, onSave }: Props) {
             <p className="text-white/50 text-sm">Uploading…</p>
           ) : (
             <>
-              <p className="text-white/50 text-sm">Drag & drop photos here, or click to browse</p>
-              <p className="text-white/25 text-xs mt-1">Supports JPG, PNG, WebP</p>
+              <p className="text-white/50 text-sm">Drag & drop photos here, or tap to browse</p>
+              <p className="text-white/25 text-xs mt-1">Supports JPG, PNG, WebP · First image is the cover</p>
             </>
           )}
         </div>
@@ -297,15 +338,13 @@ export function ListingForm({ initialData, onSave }: Props) {
       </div>
 
       {/* Agent */}
-      {agents.length > 0 && (
-        <div>
-          <label className="admin-label">Assigned agent</label>
-          <select value={form.agent_id} onChange={(e) => set("agent_id", e.target.value)} className="admin-input">
-            <option value="">No agent assigned</option>
-            {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-          </select>
-        </div>
-      )}
+      <div>
+        <label className="admin-label">Assigned agent</label>
+        <select value={form.agent_id} onChange={(e) => set("agent_id", e.target.value)} className="admin-input">
+          <option value="">No agent assigned</option>
+          {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+        </select>
+      </div>
 
       {error && (
         <div className="bg-red-900/20 border border-red-900/40 text-red-400 text-sm px-4 py-3 rounded-lg">
