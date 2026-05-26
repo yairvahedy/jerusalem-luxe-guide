@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Upload, X, Star, GripVertical, Video, Save, PlayCircle, FileVideo } from "lucide-react";
-import { uploadImage, uploadVideo, getAllAgentsAdmin } from "@/lib/db";
+import { uploadImage, uploadVideo, getAllAgentsAdmin, getAllNeighborhoodsAdmin } from "@/lib/db";
 import { useToast } from "@/lib/toast";
 import type { DbListing, DbListingInsert, Agent } from "@/lib/database.types";
 
@@ -9,10 +9,58 @@ type Props = {
   onSave: (data: DbListingInsert) => Promise<void>;
 };
 
-const NEIGHBORHOODS = [
-  "German Colony", "Rehavia", "Talbiya", "Old Katamon", "City Center",
-  "Baka", "Mamilla", "Arnona", "Abu Tor", "Talbieh", "Yemin Moshe",
-  "Kiryat Moshe", "Givat Ram", "Har Nof", "Ramat Eshkol",
+const NEIGHBORHOODS_FALLBACK = [
+  "Abu Tor",
+  "Arnona",
+  "Baka",
+  "Bayit VeGan",
+  "Bucharim",
+  "City Center",
+  "East Talpiot",
+  "Ezrat Torah",
+  "French Hill",
+  "German Colony",
+  "Geula",
+  "Gilo",
+  "Givat Mordechai",
+  "Givat Ram",
+  "Givat Shaul",
+  "Greek Colony",
+  "Har Homa",
+  "Har Nof",
+  "Katamon",
+  "Kiryat Belz",
+  "Kiryat HaYovel",
+  "Kiryat Menachem",
+  "Kiryat Moshe",
+  "Kiryat Wolfson",
+  "Kiryat Zanz",
+  "Malcha",
+  "Mamilla",
+  "Mea Shearim",
+  "Mekor Baruch",
+  "Mekor Chaim",
+  "Mount Scopus",
+  "Musrara",
+  "Nachlaot",
+  "Nayot",
+  "Neve Granot",
+  "Neve Shaanan",
+  "Old City",
+  "Old Katamon",
+  "Pat",
+  "Pisgat Ze'ev",
+  "Ramat Eshkol",
+  "Ramat Shlomo",
+  "Ramot",
+  "Rehavia",
+  "Romema",
+  "Sanhedria",
+  "Sanhedria Murchevet",
+  "Sha'arei Chesed",
+  "Talbiya",
+  "Talpiot",
+  "Yemin Moshe",
 ];
 
 function generateSlug(title: string) {
@@ -22,6 +70,7 @@ function generateSlug(title: string) {
 export function ListingForm({ initialData, onSave }: Props) {
   const isEdit = !!initialData;
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [neighborhoodOptions, setNeighborhoodOptions] = useState<string[]>(NEIGHBORHOODS_FALLBACK);
   const { toast } = useToast();
 
   const [form, setForm] = useState({
@@ -64,6 +113,13 @@ export function ListingForm({ initialData, onSave }: Props) {
 
   useEffect(() => {
     getAllAgentsAdmin().then(setAgents).catch(() => {});
+    getAllNeighborhoodsAdmin()
+      .then((nbhds) => {
+        if (nbhds.length > 0) {
+          setNeighborhoodOptions(nbhds.map((n) => n.name).sort((a, b) => a.localeCompare(b)));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const set = (key: string, value: unknown) => setForm((f) => ({ ...f, [key]: value }));
@@ -255,7 +311,10 @@ export function ListingForm({ initialData, onSave }: Props) {
           <label className="admin-label">Neighborhood *</label>
           <select value={form.neighborhood} onChange={(e) => set("neighborhood", e.target.value)} className="admin-input" required>
             <option value="" disabled>Select neighborhood</option>
-            {NEIGHBORHOODS.map((n) => <option key={n} value={n}>{n}</option>)}
+            {neighborhoodOptions.map((n) => <option key={n} value={n}>{n}</option>)}
+            {form.neighborhood && !neighborhoodOptions.includes(form.neighborhood) && (
+              <option key={form.neighborhood} value={form.neighborhood}>{form.neighborhood}</option>
+            )}
           </select>
         </div>
       </div>
