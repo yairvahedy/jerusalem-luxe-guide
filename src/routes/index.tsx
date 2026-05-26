@@ -294,9 +294,6 @@ function SoldStrip({ items }: { items: DbListing[] }) {
             <h2 className="font-display text-3xl sm:text-5xl leading-tight">{t.sold.title}</h2>
             <p className="mt-4 text-primary-foreground/50 max-w-md">{t.sold.subtitle}</p>
           </div>
-          <Link to="/sold" className="hidden sm:inline-flex items-center gap-2 text-sm uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">
-            All <ArrowRight className="size-4" />
-          </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {items.map((l) => (
