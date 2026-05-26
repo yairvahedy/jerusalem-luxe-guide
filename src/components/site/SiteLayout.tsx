@@ -211,7 +211,7 @@ function FloatingDesktopCTA() {
       href={waLink()}
       target="_blank"
       rel="noopener"
-      className="hidden lg:flex fixed bottom-7 right-7 z-40 items-center gap-2.5 h-14 px-6 rounded-full bg-[#25D366] text-white font-medium shadow-2xl shadow-black/25 hover:scale-[1.04] transition-transform"
+      className="hidden lg:flex fixed bottom-7 right-7 z-40 items-center gap-2.5 h-14 px-6 rounded-full text-white font-medium shadow-2xl shadow-black/25 hover:scale-[1.04] transition-transform bg-[#3dab2c]"
     >
       <MessageCircle className="size-5" /> WhatsApp Jack
     </a>
