@@ -6,8 +6,8 @@ export const SITE = {
   whatsapp: "972533985043",
   email: "jackfreedman2210@gmail.com",
   city: "Jerusalem",
-  address: "King David Street, Jerusalem, Israel",
-  mapsQuery: "King+David+Street+Jerusalem",
+  address: "Jerusalem",
+  mapsQuery: "Jerusalem,Israel",
 };
 
 export const waLink = (msg = "Hi Jack, I'd like more info about a property.") =>

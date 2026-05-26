@@ -57,7 +57,7 @@ function ContactPage() {
             <div className="flex items-center gap-4 p-5 rounded-sm border border-border">
               <MapPin className="size-5 text-accent" />
               <div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground">Office</div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">Service Area</div>
                 <div className="font-display text-xl">{SITE.address}</div>
               </div>
             </div>
