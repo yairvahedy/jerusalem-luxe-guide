@@ -75,7 +75,11 @@ function NeighborhoodsPage() {
                   </ul>
                 )}
                 <div className="mt-8">
-                  <Link to="/listings" className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-foreground/60 hover:text-accent transition-colors">
+                  <Link
+                    to="/listings"
+                    search={{ neighborhood: n.name }}
+                    className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-foreground/60 hover:text-accent transition-colors"
+                  >
                     View listings in {n.name}
                   </Link>
                 </div>

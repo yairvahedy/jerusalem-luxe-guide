@@ -3,11 +3,14 @@ import { useMemo, useState, useEffect } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { activeListings, type Listing } from "@/lib/listings";
-import { getListings } from "@/lib/db";
+import { getListings, getNeighborhoods } from "@/lib/db";
 import { PropertyCard } from "@/components/site/PropertyCard";
 import type { DbListing } from "@/lib/database.types";
 
 export const Route = createFileRoute("/listings/")({
+  validateSearch: (search) => ({
+    neighborhood: typeof search.neighborhood === "string" ? search.neighborhood : "",
+  }),
   component: ListingsPage,
 });
 
@@ -27,25 +30,42 @@ function staticToDb(l: Listing): DbListing {
 
 function ListingsPage() {
   const { t } = useI18n();
+  const { neighborhood: searchNeighborhood } = Route.useSearch();
+
   const [allListings, setAllListings] = useState<DbListing[]>(activeListings().map(staticToDb));
+  const [dbNeighborhoods, setDbNeighborhoods] = useState<string[]>([]);
   const [q, setQ] = useState("");
-  const [nbhd, setNbhd] = useState<string>("");
+  const [nbhd, setNbhd] = useState<string>(searchNeighborhood ?? "");
   const [beds, setBeds] = useState<string>("");
   const [baths, setBaths] = useState<string>("");
   const [type, setType] = useState<string>("");
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(!!searchNeighborhood);
+
+  // Sync nbhd state when URL search param changes (e.g. back/forward navigation)
+  useEffect(() => {
+    setNbhd(searchNeighborhood ?? "");
+    if (searchNeighborhood) setFiltersOpen(true);
+  }, [searchNeighborhood]);
 
   useEffect(() => {
     getListings().then((data) => {
       const available = data.filter((l) => l.status === "available");
       if (available.length > 0) setAllListings(available);
     }).catch(() => {});
+
+    // Load all DB neighborhoods so the dropdown always has the full list
+    getNeighborhoods().then((nbhds) => {
+      setDbNeighborhoods(nbhds.map((n) => n.name));
+    }).catch(() => {});
   }, []);
 
-  const neighborhoods = useMemo(() =>
-    [...new Set(allListings.map((l) => l.neighborhood))].sort(),
-    [allListings]
-  );
+  // Merge: neighborhoods from DB + neighborhoods from listings + current selection
+  // (current selection included so the dropdown always shows the right value even before DB loads)
+  const neighborhoods = useMemo(() => {
+    const fromListings = allListings.map((l) => l.neighborhood);
+    const current = nbhd ? [nbhd] : [];
+    return [...new Set([...dbNeighborhoods, ...fromListings, ...current])].sort();
+  }, [allListings, dbNeighborhoods, nbhd]);
 
   const items = useMemo(() => {
     return allListings.filter((l) => {
