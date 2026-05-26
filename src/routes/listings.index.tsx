@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { activeListings, NEIGHBORHOODS } from "@/lib/listings";
 import { PropertyCard } from "@/components/site/PropertyCard";
@@ -16,6 +16,7 @@ function ListingsPage() {
   const [beds, setBeds] = useState<string>("");
   const [baths, setBaths] = useState<string>("");
   const [type, setType] = useState<string>("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const items = useMemo(() => {
     return activeListings().filter((l) => {
@@ -29,49 +30,122 @@ function ListingsPage() {
   }, [q, nbhd, beds, baths, type]);
 
   const clearAll = () => { setQ(""); setNbhd(""); setBeds(""); setBaths(""); setType(""); };
+  const hasFilters = q || nbhd || beds || baths || type;
 
   return (
     <>
-      <section className="border-b border-border bg-secondary/40">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 pt-14 pb-10 sm:pt-20 sm:pb-12">
-          <div className="text-[11px] uppercase tracking-[0.3em] text-accent mb-3">Collection</div>
-          <h1 className="font-display text-4xl sm:text-6xl leading-tight">{t.nav.listings}</h1>
+      {/* Hero header */}
+      <section className="border-b border-border/40 bg-secondary/20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 pt-16 pb-12 sm:pt-24 sm:pb-16">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px w-8 bg-accent" />
+            <div className="text-[10px] uppercase tracking-[0.35em] text-accent">Collection</div>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <h1 className="font-display text-4xl sm:text-6xl leading-tight">{t.nav.listings}</h1>
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{items.length}</span> {t.filters.results}
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 sm:px-8 py-8 sm:py-10">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <label className="lg:col-span-2 relative">
-            <Search className="size-4 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.filters.search} className="w-full h-11 pl-10 rtl:pl-3 rtl:pr-10 pr-3 bg-background border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-accent" />
+      {/* Desktop filters */}
+      <section className="hidden lg:block sticky top-[80px] z-30 bg-background/95 backdrop-blur border-b border-border/40">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 py-4">
+          <div className="flex items-center gap-3">
+            <label className="relative flex-1 max-w-xs">
+              <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder={t.filters.search}
+                className="w-full h-10 pl-10 pr-3 bg-secondary/50 border border-border/60 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+            </label>
+            <FilterSelect value={nbhd} onChange={setNbhd} label={t.filters.neighborhood} options={[{ v: "", l: t.filters.all }, ...NEIGHBORHOODS.map((n) => ({ v: n, l: n }))]} />
+            <FilterSelect value={beds} onChange={setBeds} label={t.filters.beds} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4,5].map((n) => ({ v: String(n), l: `${n}+` }))]} />
+            <FilterSelect value={baths} onChange={setBaths} label={t.filters.baths} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4].map((n) => ({ v: String(n), l: `${n}+` }))]} />
+            <FilterSelect value={type} onChange={setType} label={t.filters.type} options={[{ v: "", l: t.filters.all }, { v: "sale", l: t.filters.sale }, { v: "rent", l: t.filters.rent }]} />
+            {hasFilters && (
+              <button onClick={clearAll} className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors shrink-0">
+                <X className="size-3.5" /> {t.filters.clear}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile filter button */}
+      <section className="lg:hidden px-5 py-4 border-b border-border/40 bg-background/95">
+        <div className="flex gap-3">
+          <label className="relative flex-1">
+            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search..."
+              className="w-full h-11 pl-10 pr-3 bg-secondary/50 border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-accent"
+            />
           </label>
-          <Select value={nbhd} onChange={setNbhd} label={t.filters.neighborhood} options={[{ v: "", l: t.filters.all }, ...NEIGHBORHOODS.map((n) => ({ v: n, l: n }))]} />
-          <Select value={beds} onChange={setBeds} label={t.filters.beds} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4,5].map((n) => ({ v: String(n), l: `${n}+` }))]} />
-          <Select value={baths} onChange={setBaths} label={t.filters.baths} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4].map((n) => ({ v: String(n), l: `${n}+` }))]} />
-          <Select value={type} onChange={setType} label={t.filters.type} options={[{ v: "", l: t.filters.all }, { v: "sale", l: t.filters.sale }, { v: "rent", l: t.filters.rent }]} />
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            className={`flex items-center gap-2 h-11 px-4 rounded-sm border text-sm transition-colors ${hasFilters ? "border-accent text-accent bg-accent/5" : "border-border"}`}
+          >
+            <SlidersHorizontal className="size-4" />
+            {hasFilters ? "Filtered" : "Filter"}
+          </button>
         </div>
-        <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-          <div>{items.length} {t.filters.results}</div>
-          <button onClick={clearAll} className="uppercase tracking-widest hover:text-accent">{t.filters.clear}</button>
-        </div>
+        {filtersOpen && (
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            <FilterSelect value={nbhd} onChange={setNbhd} label={t.filters.neighborhood} options={[{ v: "", l: t.filters.all }, ...NEIGHBORHOODS.map((n) => ({ v: n, l: n }))]} />
+            <FilterSelect value={type} onChange={setType} label={t.filters.type} options={[{ v: "", l: t.filters.all }, { v: "sale", l: t.filters.sale }, { v: "rent", l: t.filters.rent }]} />
+            <FilterSelect value={beds} onChange={setBeds} label={t.filters.beds} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4,5].map((n) => ({ v: String(n), l: `${n}+` }))]} />
+            <FilterSelect value={baths} onChange={setBaths} label={t.filters.baths} options={[{ v: "", l: t.filters.all }, ...[1,2,3,4].map((n) => ({ v: String(n), l: `${n}+` }))]} />
+            {hasFilters && (
+              <button onClick={clearAll} className="col-span-2 flex items-center justify-center gap-2 h-11 text-sm border border-border rounded-sm text-muted-foreground">
+                <X className="size-4" /> Clear all filters
+              </button>
+            )}
+          </div>
+        )}
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 sm:px-8 pb-20">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((l) => <PropertyCard key={l.slug} l={l} />)}
-        </div>
+      {/* Grid */}
+      <section className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16">
+        {items.length === 0 ? (
+          <div className="text-center py-24">
+            <div className="font-display text-2xl text-muted-foreground mb-3">No listings found</div>
+            <p className="text-sm text-muted-foreground mb-6">Try adjusting your filters</p>
+            <button onClick={clearAll} className="text-sm uppercase tracking-widest text-accent hover:underline">
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((l) => (
+              <PropertyCard key={l.slug} l={l} />
+            ))}
+          </div>
+        )}
       </section>
     </>
   );
 }
 
-function Select({ value, onChange, label, options }: { value: string; onChange: (v: string) => void; label: string; options: { v: string; l: string }[] }) {
+function FilterSelect({ value, onChange, label, options }: { value: string; onChange: (v: string) => void; label: string; options: { v: string; l: string }[] }) {
   return (
     <label className="block">
       <span className="sr-only">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full h-11 px-3 bg-background border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-accent">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full h-10 px-3 bg-secondary/50 border border-border/60 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-accent appearance-none cursor-pointer"
+      >
         <option value="" disabled hidden>{label}</option>
-        {options.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+        {options.map((o) => (
+          <option key={o.v} value={o.v}>{o.l}</option>
+        ))}
       </select>
     </label>
   );

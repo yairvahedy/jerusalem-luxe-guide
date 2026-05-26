@@ -12,10 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SoldRouteImport } from './routes/sold'
 import { Route as NeighborhoodsRouteImport } from './routes/neighborhoods'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIndexRouteImport } from './routes/listings.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ListingsSlugRouteImport } from './routes/listings.$slug'
+import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
+import { Route as AdminListingsIndexRouteImport } from './routes/admin.listings.index'
+import { Route as AdminListingsNewRouteImport } from './routes/admin.listings.new'
+import { Route as AdminListingsIdEditRouteImport } from './routes/admin.listings.$id.edit'
 
 const SoldRoute = SoldRouteImport.update({
   id: '/sold',
@@ -30,6 +36,11 @@ const NeighborhoodsRoute = NeighborhoodsRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -47,20 +58,51 @@ const ListingsIndexRoute = ListingsIndexRouteImport.update({
   path: '/listings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ListingsSlugRoute = ListingsSlugRouteImport.update({
   id: '/listings/$slug',
   path: '/listings/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAgentsRoute = AdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminListingsIndexRoute = AdminListingsIndexRouteImport.update({
+  id: '/listings/',
+  path: '/listings/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminListingsNewRoute = AdminListingsNewRouteImport.update({
+  id: '/listings/new',
+  path: '/listings/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminListingsIdEditRoute = AdminListingsIdEditRouteImport.update({
+  id: '/listings/$id/edit',
+  path: '/listings/$id/edit',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/listings/': typeof ListingsIndexRoute
+  '/admin/listings/new': typeof AdminListingsNewRoute
+  '/admin/listings/': typeof AdminListingsIndexRoute
+  '/admin/listings/$id/edit': typeof AdminListingsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,29 +110,46 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/listings': typeof ListingsIndexRoute
+  '/admin/listings/new': typeof AdminListingsNewRoute
+  '/admin/listings': typeof AdminListingsIndexRoute
+  '/admin/listings/$id/edit': typeof AdminListingsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
   '/sold': typeof SoldRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/listings/': typeof ListingsIndexRoute
+  '/admin/listings/new': typeof AdminListingsNewRoute
+  '/admin/listings/': typeof AdminListingsIndexRoute
+  '/admin/listings/$id/edit': typeof AdminListingsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/neighborhoods'
     | '/sold'
+    | '/admin/agents'
     | '/listings/$slug'
+    | '/admin/'
     | '/listings/'
+    | '/admin/listings/new'
+    | '/admin/listings/'
+    | '/admin/listings/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,22 +157,34 @@ export interface FileRouteTypes {
     | '/contact'
     | '/neighborhoods'
     | '/sold'
+    | '/admin/agents'
     | '/listings/$slug'
+    | '/admin'
     | '/listings'
+    | '/admin/listings/new'
+    | '/admin/listings'
+    | '/admin/listings/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/neighborhoods'
     | '/sold'
+    | '/admin/agents'
     | '/listings/$slug'
+    | '/admin/'
     | '/listings/'
+    | '/admin/listings/new'
+    | '/admin/listings/'
+    | '/admin/listings/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   NeighborhoodsRoute: typeof NeighborhoodsRoute
   SoldRoute: typeof SoldRoute
@@ -144,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -165,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/listings/$slug': {
       id: '/listings/$slug'
       path: '/listings/$slug'
@@ -172,12 +257,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/agents': {
+      id: '/admin/agents'
+      path: '/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AdminAgentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/listings/': {
+      id: '/admin/listings/'
+      path: '/listings'
+      fullPath: '/admin/listings/'
+      preLoaderRoute: typeof AdminListingsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/listings/new': {
+      id: '/admin/listings/new'
+      path: '/listings/new'
+      fullPath: '/admin/listings/new'
+      preLoaderRoute: typeof AdminListingsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/listings/$id/edit': {
+      id: '/admin/listings/$id/edit'
+      path: '/listings/$id/edit'
+      fullPath: '/admin/listings/$id/edit'
+      preLoaderRoute: typeof AdminListingsIdEditRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminListingsNewRoute: typeof AdminListingsNewRoute
+  AdminListingsIndexRoute: typeof AdminListingsIndexRoute
+  AdminListingsIdEditRoute: typeof AdminListingsIdEditRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgentsRoute: AdminAgentsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminListingsNewRoute: AdminListingsNewRoute,
+  AdminListingsIndexRoute: AdminListingsIndexRoute,
+  AdminListingsIdEditRoute: AdminListingsIdEditRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   NeighborhoodsRoute: NeighborhoodsRoute,
   SoldRoute: SoldRoute,
