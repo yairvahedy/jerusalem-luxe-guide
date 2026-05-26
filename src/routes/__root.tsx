@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { LangProvider } from "@/lib/i18n";
 import { AuthProvider } from "@/lib/auth";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { ListingAgentProvider } from "@/lib/listing-agent-context";
 
 function NotFoundComponent() {
   return (
@@ -98,9 +99,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LangProvider>
-          <SiteLayout>
-            <Outlet />
-          </SiteLayout>
+          <ListingAgentProvider>
+            <SiteLayout>
+              <Outlet />
+            </SiteLayout>
+          </ListingAgentProvider>
         </LangProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { Menu, X, Phone, MessageCircle, Languages, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { SITE, waLink, telLink } from "@/lib/site";
+import { useListingAgent } from "@/lib/listing-agent-context";
 import logo from "@/assets/jf-logo.jpeg";
 
 function Header() {
@@ -10,6 +11,14 @@ function Header() {
   const [open, setOpen] = useState(false);
   const router = useRouterState();
   const isAdmin = router.location.pathname.startsWith("/admin");
+  const { listingAgent } = useListingAgent();
+
+  const agentFirstName = listingAgent ? listingAgent.name.split(" ")[0] : null;
+  const activeWaLink = listingAgent?.whatsapp
+    ? `https://wa.me/${listingAgent.whatsapp}?text=${encodeURIComponent(`Hi ${agentFirstName}, I'd like more info about a property.`)}`
+    : waLink();
+  const activeTelLink = listingAgent?.phone ? `tel:${listingAgent.phone}` : telLink;
+  const activePhoneDisplay = listingAgent?.phone ?? SITE.phoneDisplay;
 
   const nav = [
     { to: "/", label: t.nav.home },
@@ -56,18 +65,18 @@ function Header() {
             <Languages className="size-3.5" /> {lang === "en" ? "עב" : "EN"}
           </button>
           <a
-            href={waLink()}
+            href={activeWaLink}
             target="_blank"
             rel="noopener"
             className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-white hover:bg-[#22c45e] px-4 py-2 rounded-sm transition-colors bg-[#3dab2c]"
           >
-            <MessageCircle className="size-3.5" /> WhatsApp
+            <MessageCircle className="size-3.5" /> {agentFirstName ? `WhatsApp ${agentFirstName}` : "WhatsApp"}
           </a>
           <a
-            href={telLink}
+            href={activeTelLink}
             className="hidden md:inline-flex items-center gap-2 text-[11px] uppercase tracking-widest border border-border hover:border-foreground/40 px-4 py-2 rounded-sm transition-colors"
           >
-            <Phone className="size-3.5" /> {SITE.phoneDisplay}
+            <Phone className="size-3.5" /> {activePhoneDisplay}
           </a>
           <button className="lg:hidden p-2 -mr-1" onClick={() => setOpen((o) => !o)} aria-label="Menu">
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -92,11 +101,11 @@ function Header() {
               </Link>
             ))}
             <div className="pt-5 pb-2 flex gap-3">
-              <a href={waLink()} target="_blank" rel="noopener"
+              <a href={activeWaLink} target="_blank" rel="noopener"
                 className="flex-1 flex items-center justify-center gap-2 h-12 bg-[#3dab2c] text-white rounded-sm text-sm font-medium hover:bg-[#22c45e] transition-colors">
-                <MessageCircle className="size-4" /> WhatsApp
+                <MessageCircle className="size-4" /> {agentFirstName ? `WhatsApp ${agentFirstName}` : "WhatsApp"}
               </a>
-              <a href={telLink}
+              <a href={activeTelLink}
                 className="flex-1 flex items-center justify-center gap-2 h-12 bg-primary text-primary-foreground rounded-sm text-sm font-medium">
                 <Phone className="size-4" /> Call
               </a>

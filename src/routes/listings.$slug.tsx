@@ -7,6 +7,7 @@ import { getListingBySlug, getListings, getAgents } from "@/lib/db";
 import { waLink, telLink, SITE } from "@/lib/site";
 import { PropertyCard, formatDisplayPrice } from "@/components/site/PropertyCard";
 import type { DbListing, Agent } from "@/lib/database.types";
+import { useListingAgent } from "@/lib/listing-agent-context";
 
 function staticToDb(l: Listing): DbListing {
   return {
@@ -43,6 +44,7 @@ function ListingDetail() {
   const { t, lang } = useI18n();
   const [active, setActive] = useState(0);
   const [agent, setAgent] = useState<Agent | null>(null);
+  const { setListingAgent } = useListingAgent();
   const [related, setRelated] = useState<DbListing[]>(
     activeListings().filter((x) => x.slug !== listing.slug).slice(0, 3).map(staticToDb)
   );
@@ -55,10 +57,14 @@ function ListingDetail() {
 
     if (listing.agent_id) {
       getAgents().then((agents) => {
-        const found = agents.find((a) => a.id === listing.agent_id);
-        setAgent(found ?? null);
+        const found = agents.find((a) => a.id === listing.agent_id) ?? null;
+        setAgent(found);
+        setListingAgent(found);
       }).catch(() => {});
     }
+
+    // Clear agent from layout when leaving this listing page
+    return () => setListingAgent(null);
   }, [listing.slug, listing.agent_id]);
 
   const facts = [
