@@ -24,8 +24,9 @@ export default defineConfig({
         "@supabase/storage-js",
         "@supabase/realtime-js",
       ],
-      // ws is CJS and must NOT be bundled — let Bun resolve it natively
-      external: ["ws"],
+      // In dev, ws must be external so Bun handles it as CJS (avoids "require is not defined" in Vite's ESM evaluator).
+      // In production the Cloudflare plugin forbids ssr.external, so we skip it — rollup bundles ws fine.
+      ...(process.env.NODE_ENV !== "production" ? { external: ["ws"] } : {}),
     },
   },
 });

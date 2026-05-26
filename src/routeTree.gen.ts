@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SoldRouteImport } from './routes/sold'
 import { Route as NeighborhoodsRouteImport } from './routes/neighborhoods'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AgentsRouteImport } from './routes/agents'
@@ -27,11 +26,6 @@ import { Route as AdminListingsIndexRouteImport } from './routes/admin.listings.
 import { Route as AdminListingsNewRouteImport } from './routes/admin.listings.new'
 import { Route as AdminListingsIdEditRouteImport } from './routes/admin.listings.$id.edit'
 
-const SoldRoute = SoldRouteImport.update({
-  id: '/sold',
-  path: '/sold',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NeighborhoodsRoute = NeighborhoodsRouteImport.update({
   id: '/neighborhoods',
   path: '/neighborhoods',
@@ -120,7 +114,6 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AgentsRoute
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
-  '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
@@ -138,7 +131,6 @@ export interface FileRoutesByTo {
   '/agents': typeof AgentsRoute
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
-  '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
@@ -158,7 +150,6 @@ export interface FileRoutesById {
   '/agents': typeof AgentsRoute
   '/contact': typeof ContactRoute
   '/neighborhoods': typeof NeighborhoodsRoute
-  '/sold': typeof SoldRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/neighborhoods': typeof AdminNeighborhoodsRoute
@@ -179,7 +170,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/contact'
     | '/neighborhoods'
-    | '/sold'
     | '/admin/agents'
     | '/admin/content'
     | '/admin/neighborhoods'
@@ -197,7 +187,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/contact'
     | '/neighborhoods'
-    | '/sold'
     | '/admin/agents'
     | '/admin/content'
     | '/admin/neighborhoods'
@@ -216,7 +205,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/contact'
     | '/neighborhoods'
-    | '/sold'
     | '/admin/agents'
     | '/admin/content'
     | '/admin/neighborhoods'
@@ -236,20 +224,12 @@ export interface RootRouteChildren {
   AgentsRoute: typeof AgentsRoute
   ContactRoute: typeof ContactRoute
   NeighborhoodsRoute: typeof NeighborhoodsRoute
-  SoldRoute: typeof SoldRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
   ListingsIndexRoute: typeof ListingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sold': {
-      id: '/sold'
-      path: '/sold'
-      fullPath: '/sold'
-      preLoaderRoute: typeof SoldRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/neighborhoods': {
       id: '/neighborhoods'
       path: '/neighborhoods'
@@ -396,7 +376,6 @@ const rootRouteChildren: RootRouteChildren = {
   AgentsRoute: AgentsRoute,
   ContactRoute: ContactRoute,
   NeighborhoodsRoute: NeighborhoodsRoute,
-  SoldRoute: SoldRoute,
   ListingsSlugRoute: ListingsSlugRoute,
   ListingsIndexRoute: ListingsIndexRoute,
 }

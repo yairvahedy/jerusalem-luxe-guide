@@ -16,7 +16,6 @@ function Header() {
     { to: "/listings", label: t.nav.listings },
     { to: "/neighborhoods", label: t.nav.neighborhoods },
     { to: "/agents", label: lang === "he" ? "סוכנים" : "Agents" },
-    { to: "/sold", label: t.nav.sold },
     { to: "/about", label: t.nav.about },
     { to: "/contact", label: t.nav.contact },
   ];
@@ -160,7 +159,6 @@ function Footer() {
               { to: "/listings", label: t.nav.listings },
               { to: "/neighborhoods", label: t.nav.neighborhoods },
               { to: "/agents", label: lang === "he" ? "סוכנים" : "Agents" },
-              { to: "/sold", label: t.nav.sold },
               { to: "/about", label: t.nav.about },
               { to: "/contact", label: t.nav.contact },
             ].map((n) => (

@@ -3,10 +3,10 @@ import { MessageCircle, Phone, ArrowRight, Star, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
 import { SITE, waLink, telLink } from "@/lib/site";
-import { featuredListings, soldListings, NEIGHBORHOODS, type Listing } from "@/lib/listings";
+import { featuredListings, NEIGHBORHOODS, type Listing } from "@/lib/listings";
 import { PropertyCard } from "@/components/site/PropertyCard";
 import {
-  getFeaturedListings, getSoldListings, getStats, getWhyJack,
+  getFeaturedListings, getStats, getWhyJack,
   getTestimonials, getLifestyleContent, getContactBanner,
 } from "@/lib/db";
 import type {
@@ -70,7 +70,6 @@ const defaultContactBanner: ContactBannerContent = { title: "Looking for somethi
 
 type SiteData = {
   featured: DbListing[];
-  sold: DbListing[];
   stats: StatItem[];
   whyJack: WhyItem[];
   testimonials: TestimonialItem[];
@@ -81,7 +80,6 @@ type SiteData = {
 function useSiteData() {
   const [data, setData] = useState<SiteData>({
     featured: featuredListings().map(staticToDb),
-    sold: soldListings().map(staticToDb),
     stats: defaultStats,
     whyJack: defaultWhyJack,
     testimonials: defaultTestimonials,
@@ -92,16 +90,14 @@ function useSiteData() {
   useEffect(() => {
     Promise.allSettled([
       getFeaturedListings(),
-      getSoldListings(),
       getStats(),
       getWhyJack(),
       getTestimonials(),
       getLifestyleContent(),
       getContactBanner(),
-    ]).then(([featured, sold, stats, whyJack, testimonials, lifestyle, contactBanner]) => {
+    ]).then(([featured, stats, whyJack, testimonials, lifestyle, contactBanner]) => {
       setData({
         featured: featured.status === "fulfilled" && featured.value.length > 0 ? featured.value : featuredListings().map(staticToDb),
-        sold: sold.status === "fulfilled" && sold.value.length > 0 ? sold.value : soldListings().map(staticToDb),
         stats: stats.status === "fulfilled" ? stats.value : defaultStats,
         whyJack: whyJack.status === "fulfilled" ? whyJack.value : defaultWhyJack,
         testimonials: testimonials.status === "fulfilled" ? testimonials.value : defaultTestimonials,
@@ -280,47 +276,6 @@ function WhyJack({ items }: { items: WhyItem[] }) {
   );
 }
 
-function SoldStrip({ items }: { items: DbListing[] }) {
-  const { t } = useI18n();
-  return (
-    <section className="bg-primary text-primary-foreground">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 py-24 sm:py-32">
-        <div className="flex items-end justify-between gap-6 mb-14">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px w-8 bg-accent" />
-              <div className="text-[10px] uppercase tracking-[0.35em] text-accent">04 — Track record</div>
-            </div>
-            <h2 className="font-display text-3xl sm:text-5xl leading-tight">{t.sold.title}</h2>
-            <p className="mt-4 text-primary-foreground/50 max-w-md">{t.sold.subtitle}</p>
-          </div>
-          <Link to="/sold" className="hidden sm:inline-flex items-center gap-2 text-sm uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">
-            All <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {items.map((l) => (
-            <div key={l.slug} className="group relative aspect-[16/9] overflow-hidden rounded-sm bg-white/5">
-              {l.images[0] ? (
-                <img src={l.images[0]} alt={l.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-70 group-hover:scale-105 transition-all duration-700" />
-              ) : (
-                <div className="absolute inset-0 bg-white/5" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-              <div className="absolute top-4 left-4 text-[9px] uppercase tracking-[0.3em] bg-accent text-accent-foreground px-2.5 py-1 rounded-sm">Sold</div>
-              <div className="absolute bottom-5 left-5 right-5">
-                <div className="text-[9px] uppercase tracking-[0.25em] text-accent">{l.neighborhood}</div>
-                <div className="font-display text-2xl mt-1">{l.title}</div>
-                <div className="mt-1 text-sm text-white/50">₪{new Intl.NumberFormat("en-US").format(l.price)}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Testimonials({ items }: { items: TestimonialItem[] }) {
   const { t } = useI18n();
   return (
@@ -397,7 +352,6 @@ function Index() {
       <Featured items={data.featured} />
       <Neighborhoods />
       <WhyJack items={data.whyJack} />
-      <SoldStrip items={data.sold} />
       <LifestyleSection content={data.lifestyle} />
       <Testimonials items={data.testimonials} />
       <ContactBanner content={data.contactBanner} />
