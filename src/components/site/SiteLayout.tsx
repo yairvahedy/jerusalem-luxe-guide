@@ -182,8 +182,10 @@ function Footer() {
 function StickyMobileCTA() {
   const { t } = useI18n();
   const router = useRouterState();
-  const isAdmin = router.location.pathname.startsWith("/admin");
-  if (isAdmin) return null;
+  const path = router.location.pathname;
+  const isAdmin = path.startsWith("/admin");
+  const isListings = path.startsWith("/listings");
+  if (isAdmin || isListings) return null;
   return (
     <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 pointer-events-none">
       <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-background via-background/90 to-transparent">
@@ -204,8 +206,10 @@ function StickyMobileCTA() {
 
 function FloatingDesktopCTA() {
   const router = useRouterState();
-  const isAdmin = router.location.pathname.startsWith("/admin");
-  if (isAdmin) return null;
+  const path = router.location.pathname;
+  const isAdmin = path.startsWith("/admin");
+  const isListings = path.startsWith("/listings");
+  if (isAdmin || isListings) return null;
   return (
     <a
       href={waLink()}
