@@ -394,7 +394,7 @@ function ContactBanner() {
               href={waLink()}
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center justify-center gap-2.5 h-13 px-7 rounded-sm bg-[#25D366] text-white font-medium shadow-lg shadow-black/20 hover:bg-[#22c45e] transition-colors"
+              className="inline-flex items-center justify-center gap-2.5 h-13 px-7 rounded-sm text-white font-medium shadow-lg shadow-black/20 hover:bg-[#22c45e] transition-colors bg-[#3dab2c]"
             >
               <MessageCircle className="size-4" /> {t.contactBanner.cta}
             </a>
