@@ -57,7 +57,7 @@ function Hero() {
               href={waLink()}
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center gap-2.5 h-13 px-7 rounded-sm bg-[#25D366] text-white font-medium hover:bg-[#22c45e] transition-colors shadow-xl shadow-black/20"
+              className="inline-flex items-center gap-2.5 h-13 px-7 rounded-sm text-white font-medium hover:bg-[#22c45e] transition-colors shadow-xl shadow-black/20 bg-[#3dab2c]"
             >
               <MessageCircle className="size-4" /> {t.cta.whatsapp}
             </a>
