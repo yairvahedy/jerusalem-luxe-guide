@@ -110,9 +110,9 @@ function ListingDetail() {
         <div className="grid lg:grid-cols-[1fr_340px] gap-8 xl:gap-12">
           {/* Gallery */}
           <div>
-            <div className="relative aspect-[16/10] bg-muted rounded-sm overflow-hidden group">
+            <div className="relative aspect-[16/10] bg-zinc-900 rounded-sm overflow-hidden group">
               {listing.images[active] ? (
-                <img src={listing.images[active]} alt={listing.title} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" />
+                <img src={listing.images[active]} alt={listing.title} className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300" />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">No image</div>
               )}
