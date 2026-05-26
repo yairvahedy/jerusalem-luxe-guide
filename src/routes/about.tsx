@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, Phone } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { waLink, telLink, SITE } from "@/lib/site";
-import portrait from "@/assets/jack-portrait.png";
+import portrait from "@/assets/jack-photo.png";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,

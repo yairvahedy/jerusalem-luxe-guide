@@ -14,7 +14,7 @@ import type {
   LifestyleContent, ContactBannerContent,
 } from "@/lib/database.types";
 import hero from "@/assets/hero-jerusalem.jpg";
-import portrait from "@/assets/jack-portrait.png";
+import portrait from "@/assets/jack-photo.png";
 import lifestyle from "@/assets/lifestyle.jpg";
 import nbhdMamilla from "@/assets/nbhd-mamilla.jpg";
 import nbhdGerman from "@/assets/nbhd-german.jpg";
